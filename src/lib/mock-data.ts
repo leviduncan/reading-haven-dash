@@ -72,7 +72,7 @@ export const mockBooks: Book[] = [
     id: '5',
     title: 'Sapiens',
     author: 'Yuval Noah Harari',
-    coverImage: 'https://m.media-amazon.com/images/I/71LMXL8DTxL._AC_UF1000,1000_QL80_.jpg',
+    coverImage: 'https://m.media-amazon.com/images/I/81tPEe0egBL._SL1500_.jpg',
     description: '100,000 years ago, at least six human species inhabited the earth. Today there is just one. Us. Homo sapiens. How did our species succeed in the battle for dominance? Why did our foraging ancestors come together to create cities and kingdoms?',
     genre: 'Non-Fiction',
     pageCount: 464,
@@ -229,14 +229,14 @@ export const getDiscoverBooks = () => {
       id: '101',
       title: 'The Invisible Life of Addie LaRue',
       author: 'V.E. Schwab',
-      coverImage: 'https://m.media-amazon.com/images/I/81zxQAvwqLL._AC_UF1000,1000_QL80_.jpg',
+      coverImage: 'https://m.media-amazon.com/images/I/71ffkGYJyrL._SL1417_.jpg',
       genre: 'Fantasy'
     },
     {
       id: '102',
       title: 'The Four Winds',
       author: 'Kristin Hannah',
-      coverImage: 'https://m.media-amazon.com/images/I/91TS9pJjKfL._AC_UF1000,1000_QL80_.jpg',
+      coverImage: 'https://m.media-amazon.com/images/I/91JhiXPlJiL._SL1500_.jpg',
       genre: 'Historical Fiction'
     },
     {
@@ -250,14 +250,14 @@ export const getDiscoverBooks = () => {
       id: '104',
       title: 'Dune',
       author: 'Frank Herbert',
-      coverImage: 'https://m.media-amazon.com/images/I/91FQoFYWqfL._AC_UF1000,1000_QL80_.jpg',
+      coverImage: 'https://m.media-amazon.com/images/I/71-1WBgjGoL._SL1500_.jpg',
       genre: 'Science Fiction'
     },
     {
       id: '105',
       title: 'The Three-Body Problem',
       author: 'Liu Cixin',
-      coverImage: 'https://m.media-amazon.com/images/I/916NfLj7xUL._AC_UF1000,1000_QL80_.jpg',
+      coverImage: 'https://m.media-amazon.com/images/I/910ap6L7TXL._SL1500_.jpg',
       genre: 'Science Fiction'
     }
   ];
