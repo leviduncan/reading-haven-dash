@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Book } from "@/lib/types";
@@ -15,7 +14,6 @@ const MyBooks = () => {
   const [sortBy, setSortBy] = useState("recently-added");
   
   useEffect(() => {
-    // Get all books
     setBooks(mockBooks);
     setFilteredBooks(mockBooks);
   }, []);
@@ -97,7 +95,6 @@ const MyBooks = () => {
       </div>
       
       <div className="max-w-7xl mx-auto px-6 py-6">
-        {/* Search and Sort */}
         <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
           <div className="relative w-full sm:w-auto sm:flex-grow">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -135,7 +132,6 @@ const MyBooks = () => {
           </div>
         </div>
         
-        {/* Book List */}
         <div className="mb-8">
           {filteredBooks.length === 0 ? (
             <div className="text-center py-12 bg-gray-50 rounded-lg">
@@ -148,17 +144,12 @@ const MyBooks = () => {
               </Link>
             </div>
           ) : (
-            filteredBooks.map(book => (
-              <BookListItem 
-                key={book.id} 
-                book={book}
-                onFavoriteToggle={handleFavoriteToggle}
-              />
+            filteredBooks.map((book) => (
+              <BookListItem key={book.id} book={book} />
             ))
           )}
         </div>
         
-        {/* Book Statistics */}
         <div>
           <h2 className="text-xl font-bold mb-4">Book Statistics</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
