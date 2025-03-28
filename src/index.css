@@ -128,3 +128,23 @@
     @apply bg-white rounded-lg shadow-sm p-4;
   }
 }
+
+.hero {
+  background: linear-gradient(#20293780, #20293780), 
+              url('../public/hero04.webp') no-repeat center center/cover;
+}
+
+/* .hero {
+  background: url('../public/hero04.webp') no-repeat center center/cover;
+  padding: 1em;
+  margin-bottom: 1em;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: black; 
+  opacity: 0.5; 
+} */
