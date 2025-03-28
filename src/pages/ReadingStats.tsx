@@ -154,7 +154,7 @@ const ReadingStats = () => {
             <div className="bg-yellow-100 p-3 rounded-full">
               <Trophy className="h-6 w-6 text-yellow-600" />
             </div>
-            <h2 className="text-xl font-bold">2023 Reading Challenge</h2>
+            <h2 className="text-xl font-bold">2024 Reading Challenge</h2>
           </div>
           
           <p className="mb-3">You've read {mockReadingChallenge.current} of {mockReadingChallenge.target} books ({mockReadingChallenge.percentage}%)</p>

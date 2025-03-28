@@ -217,7 +217,7 @@ export const mockReadingStats: ReadingStats = {
 
 export const mockReadingChallenge: ReadingChallenge = {
   id: '1',
-  name: '2023 Reading Challenge',
+  name: '2024 Reading Challenge',
   target: 30,
   current: 14,
   percentage: 47
