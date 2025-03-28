@@ -1,10 +1,20 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Book, Review } from "@/lib/types";
 import { mockBooks, mockReviews } from "@/lib/mock-data";
 import StarRating from "@/components/StarRating";
-import { User, BookOpen, Calendar, BookCopy, Clock, Edit, Trash, Heart } from "lucide-react";
+import { 
+  User, 
+  BookOpen, 
+  Calendar, 
+  BookCopy, 
+  Clock, 
+  Edit, 
+  Trash, 
+  Heart, 
+  Star, 
+  BarChart2
+} from "lucide-react";
 
 const BookDetails = () => {
   const { id } = useParams<{ id: string }>();
