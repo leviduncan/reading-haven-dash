@@ -2,92 +2,45 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Book } from "@/lib/types";
-import { mockBooks } from "@/lib/mock-data";
 import BookshelfTabs from "@/components/BookshelfTabs";
 import StarRating from "@/components/StarRating";
 import { Search, Heart, BookOpen, User, Library } from "lucide-react";
+import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
+import { toggleFavorite } from "@/lib/redux/slices/favoritesSlice";
+import { toast } from "@/components/ui/use-toast";
 
 const Favorites = () => {
-  const [books, setBooks] = useState<Book[]>([]);
-  const [recentlyAdded, setRecentlyAdded] = useState<Book[]>([]);
-  const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
+  const dispatch = useAppDispatch();
+  const { favorites, recentlyAdded, stats } = useAppSelector(state => state.favorites);
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
-  const [stats, setStats] = useState({
-    totalFavorites: 0,
-    topGenre: { name: '', count: 0 },
-    favoriteAuthor: { name: '', count: 0 },
-    averageRating: 0
-  });
+  const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
   
   useEffect(() => {
-    // Filter books that are favorites
-    const favoriteBooks = mockBooks.filter(book => book.isFavorite);
-    setBooks(favoriteBooks);
-    setFilteredBooks(favoriteBooks);
-    
-    // Get recently added favorites
-    const sortedByDate = [...favoriteBooks].sort((a, b) => {
-      const dateA = new Date(a.dateAdded).getTime();
-      const dateB = new Date(b.dateAdded).getTime();
-      return dateB - dateA;
-    });
-    setRecentlyAdded(sortedByDate.slice(0, 3));
-    
-    // Calculate stats
-    const totalRating = favoriteBooks.reduce((sum, book) => sum + (book.rating || 0), 0);
-    const avgRating = favoriteBooks.length > 0 ? totalRating / favoriteBooks.length : 0;
-    
-    // Count genres
-    const genreCounts: Record<string, number> = {};
-    favoriteBooks.forEach(book => {
-      const mainGenre = book.genre.split(',')[0].trim();
-      genreCounts[mainGenre] = (genreCounts[mainGenre] || 0) + 1;
-    });
-    
-    // Find top genre
-    let topGenre = { name: "", count: 0 };
-    Object.entries(genreCounts).forEach(([name, count]) => {
-      if (count > topGenre.count) {
-        topGenre = { name, count };
-      }
-    });
-    
-    // Count authors
-    const authorCounts: Record<string, number> = {};
-    favoriteBooks.forEach(book => {
-      authorCounts[book.author] = (authorCounts[book.author] || 0) + 1;
-    });
-    
-    // Find favorite author
-    let favoriteAuthor = { name: "", count: 0 };
-    Object.entries(authorCounts).forEach(([name, count]) => {
-      if (count > favoriteAuthor.count) {
-        favoriteAuthor = { name, count };
-      }
-    });
-    
-    setStats({
-      totalFavorites: favoriteBooks.length,
-      topGenre,
-      favoriteAuthor,
-      averageRating: avgRating
-    });
-  }, []);
+    // Filter books when favorites, activeTab or searchQuery changes
+    filterBooks(searchQuery, activeTab);
+  }, [favorites, searchQuery, activeTab]);
   
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
-    filterBooks(query, activeTab);
   };
   
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
-    filterBooks(searchQuery, tab);
+  };
+  
+  const handleFavoriteToggle = (bookId: string) => {
+    dispatch(toggleFavorite(bookId));
+    toast({
+      title: "Favorites updated",
+      description: "Your favorites list has been updated.",
+    });
   };
   
   const filterBooks = (query: string, tab: string) => {
-    let filtered = [...books];
+    let filtered = [...favorites];
     
     // Apply search filter
     if (query) {
@@ -201,7 +154,7 @@ const Favorites = () => {
                     <div className="text-sm text-muted-foreground">{book.author}</div>
                     <h3 className="font-bold mb-1">{book.title}</h3>
                     <div className="text-sm text-muted-foreground">
-                      Added 2 days ago
+                      Added {new Date(book.dateAdded).toLocaleDateString()}
                     </div>
                   </div>
                 </div>
@@ -321,7 +274,9 @@ const Favorites = () => {
                   {filteredBooks.map(book => (
                     <tr key={book.id} className="border-b hover:bg-gray-50">
                       <td className="py-3 px-4 w-12">
-                        <Heart className="h-5 w-5 fill-book-favorite text-book-favorite" />
+                        <button onClick={() => handleFavoriteToggle(book.id)}>
+                          <Heart className="h-5 w-5 fill-book-favorite text-book-favorite" />
+                        </button>
                       </td>
                       <td className="py-3 px-4">
                         <Link to={`/book/${book.id}`} className="font-medium hover:underline">

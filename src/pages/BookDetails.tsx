@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Book, Review } from "@/lib/types";
@@ -15,9 +16,15 @@ import {
   Star, 
   BarChart2
 } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { toggleFavorite } from "@/lib/redux/slices/favoritesSlice";
+import { toast } from "@/components/ui/use-toast";
 
 const BookDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const dispatch = useAppDispatch();
+  const favoriteBooks = useAppSelector(state => state.favorites.favorites);
+  
   const [book, setBook] = useState<Book | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [activeTab, setActiveTab] = useState<'details' | 'reviews' | 'similar'>('details');
@@ -35,6 +42,18 @@ const BookDetails = () => {
   if (!book) {
     return <div className="p-6">Book not found</div>;
   }
+  
+  const isFavorite = favoriteBooks.some(b => b.id === book.id);
+  
+  const handleToggleFavorite = () => {
+    dispatch(toggleFavorite(book.id));
+    toast({
+      title: isFavorite ? "Removed from favorites" : "Added to favorites",
+      description: isFavorite 
+        ? "The book has been removed from your favorites." 
+        : "The book has been added to your favorites.",
+    });
+  };
   
   return (
     <div>
@@ -111,9 +130,12 @@ const BookDetails = () => {
                 </Link>
               )}
               
-              <button className="px-6 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors flex items-center gap-2">
-                <Heart className={`h-5 w-5 ${book.isFavorite ? 'fill-book-favorite text-book-favorite' : ''}`} />
-                <span>{book.isFavorite ? 'Favorited' : 'Add to Favorites'}</span>
+              <button 
+                onClick={handleToggleFavorite}
+                className="px-6 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors flex items-center gap-2"
+              >
+                <Heart className={`h-5 w-5 ${isFavorite ? 'fill-book-favorite text-book-favorite' : ''}`} />
+                <span>{isFavorite ? 'Favorited' : 'Add to Favorites'}</span>
               </button>
               
               <button className="px-6 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">

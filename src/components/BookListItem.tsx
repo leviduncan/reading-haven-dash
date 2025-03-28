@@ -3,13 +3,27 @@ import { Book } from "@/lib/types";
 import { Link } from "react-router-dom";
 import { MoreVertical, Heart, BookOpen } from "lucide-react";
 import StarRating from "./StarRating";
+import { useAppDispatch } from "@/lib/redux/hooks";
+import { toggleFavorite } from "@/lib/redux/slices/favoritesSlice";
+import { toast } from "@/components/ui/use-toast";
 
 interface BookListItemProps {
   book: Book;
-  onFavoriteToggle?: (bookId: string) => void;
 }
 
-const BookListItem = ({ book, onFavoriteToggle }: BookListItemProps) => {
+const BookListItem = ({ book }: BookListItemProps) => {
+  const dispatch = useAppDispatch();
+  
+  const handleFavoriteToggle = () => {
+    dispatch(toggleFavorite(book.id));
+    toast({
+      title: book.isFavorite ? "Removed from favorites" : "Added to favorites",
+      description: book.isFavorite 
+        ? "The book has been removed from your favorites." 
+        : "The book has been added to your favorites.",
+    });
+  };
+  
   return (
     <div className="flex items-center py-3 border-b">
       <div className="flex-shrink-0 w-6 mr-4">
@@ -32,7 +46,7 @@ const BookListItem = ({ book, onFavoriteToggle }: BookListItemProps) => {
       
       <div className="flex items-center gap-2">
         <button 
-          onClick={() => onFavoriteToggle?.(book.id)}
+          onClick={handleFavoriteToggle}
           className="p-1 rounded-full hover:bg-gray-100"
           aria-label={book.isFavorite ? "Remove from favorites" : "Add to favorites"}
         >
