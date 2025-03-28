@@ -6,20 +6,39 @@ import { mockBooks, mockReadingStats, getRecentActivity } from "@/lib/mock-data"
 import BookCard from "@/components/BookCard";
 import StatCard from "@/components/StatCard";
 import ActivityItem from "@/components/ActivityItem";
-import { BookOpen, Clock, BarChart2, Star, Search } from "lucide-react";
+import { BookOpen, Clock, BarChart2, Star, Search, Heart } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { toggleFavorite } from "@/lib/redux/slices/favoritesSlice";
+import { toast } from "@/components/ui/use-toast";
 
 const Dashboard = () => {
   const [currentlyReading, setCurrentlyReading] = useState<Book[]>([]);
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
+  const dispatch = useAppDispatch();
+  const { favorites } = useAppSelector(state => state.favorites);
   
   useEffect(() => {
-    // Filter books that are currently being read
-    const reading = mockBooks.filter(book => book.status === 'currently-reading');
+    // Filter books that are currently being read (limit to 3)
+    const reading = mockBooks.filter(book => book.status === 'currently-reading').slice(0, 3);
     setCurrentlyReading(reading);
     
     // Get recent activity data
     setRecentActivity(getRecentActivity());
   }, []);
+
+  const handleToggleFavorite = (bookId: string) => {
+    dispatch(toggleFavorite(bookId));
+    
+    const book = mockBooks.find(book => book.id === bookId);
+    const isFavorite = favorites.some(b => b.id === bookId);
+    
+    toast({
+      title: isFavorite ? "Removed from favorites" : "Added to favorites",
+      description: isFavorite 
+        ? `${book?.title} has been removed from your favorites.` 
+        : `${book?.title} has been added to your favorites.`,
+    });
+  };
   
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -37,29 +56,34 @@ const Dashboard = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {currentlyReading.map(book => (
-            <BookCard 
-              key={book.id} 
-              book={book} 
-              showProgress={true}
-              actionButtons={
-                <div className="w-full flex flex-col gap-2">
-                  <Link
-                    to={`/book/${book.id}`}
-                    className="w-full text-center px-4 py-2 rounded-md bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
-                  >
-                    Continue Reading
-                  </Link>
-                  <Link
-                    to={`/book/${book.id}`}
-                    className="w-full text-center px-4 py-2 rounded-md border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors"
-                  >
-                    Details
-                  </Link>
-                </div>
-              }
-            />
-          ))}
+          {currentlyReading.map(book => {
+            const isFavorite = favorites.some(b => b.id === book.id);
+            
+            return (
+              <BookCard 
+                key={book.id} 
+                book={{...book, isFavorite}}
+                showProgress={true}
+                actionButtons={
+                  <div className="w-full flex flex-col gap-2">
+                    <Link
+                      to={`/book/${book.id}`}
+                      className="w-full text-center px-4 py-2 rounded-md bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
+                    >
+                      Continue Reading
+                    </Link>
+                    <button
+                      onClick={() => handleToggleFavorite(book.id)}
+                      className="w-full text-center px-4 py-2 rounded-md border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <Heart className={`h-4 w-4 ${isFavorite ? 'fill-book-favorite text-book-favorite' : ''}`} />
+                      {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+                    </button>
+                  </div>
+                }
+              />
+            );
+          })}
         </div>
       </section>
       
