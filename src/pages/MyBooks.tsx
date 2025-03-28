@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Book } from "@/lib/types";
@@ -5,18 +6,25 @@ import { mockBooks } from "@/lib/mock-data";
 import BookshelfTabs from "@/components/BookshelfTabs";
 import BookListItem from "@/components/BookListItem";
 import { Search, BookOpen, BookMarked, ListTodo, CheckCircle2 } from "lucide-react";
-import { toast } from "sonner";
+import { useAppSelector } from "@/lib/redux/hooks";
 
 const MyBooks = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("recently-added");
+  const { favorites } = useAppSelector(state => state.favorites);
   
   useEffect(() => {
-    setBooks(mockBooks);
-    setFilteredBooks(mockBooks);
-  }, []);
+    // Get books and update their favorite status
+    const updatedBooks = mockBooks.map(book => ({
+      ...book,
+      isFavorite: favorites.some(fav => fav.id === book.id)
+    }));
+    
+    setBooks(updatedBooks);
+    setFilteredBooks(updatedBooks);
+  }, [favorites]);
   
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
@@ -63,25 +71,6 @@ const MyBooks = () => {
     }
     
     setFilteredBooks(sorted);
-  };
-  
-  const handleFavoriteToggle = (bookId: string) => {
-    setBooks(prevBooks => 
-      prevBooks.map(book => 
-        book.id === bookId ? { ...book, isFavorite: !book.isFavorite } : book
-      )
-    );
-    
-    setFilteredBooks(prevBooks => 
-      prevBooks.map(book => 
-        book.id === bookId ? { ...book, isFavorite: !book.isFavorite } : book
-      )
-    );
-    
-    const book = books.find(b => b.id === bookId);
-    if (book) {
-      toast.success(`${book.title} ${book.isFavorite ? 'removed from' : 'added to'} favorites`);
-    }
   };
   
   return (

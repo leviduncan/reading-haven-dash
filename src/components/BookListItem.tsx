@@ -3,7 +3,7 @@ import { Book } from "@/lib/types";
 import { Link } from "react-router-dom";
 import { MoreVertical, Heart, BookOpen } from "lucide-react";
 import StarRating from "./StarRating";
-import { useAppDispatch } from "@/lib/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { toggleFavorite } from "@/lib/redux/slices/favoritesSlice";
 import { toast } from "@/components/ui/use-toast";
 
@@ -13,12 +13,14 @@ interface BookListItemProps {
 
 const BookListItem = ({ book }: BookListItemProps) => {
   const dispatch = useAppDispatch();
+  const { favorites } = useAppSelector(state => state.favorites);
+  const isFavorite = favorites.some(fav => fav.id === book.id);
   
   const handleFavoriteToggle = () => {
     dispatch(toggleFavorite(book.id));
     toast({
-      title: book.isFavorite ? "Removed from favorites" : "Added to favorites",
-      description: book.isFavorite 
+      title: isFavorite ? "Removed from favorites" : "Added to favorites",
+      description: isFavorite 
         ? "The book has been removed from your favorites." 
         : "The book has been added to your favorites.",
     });
@@ -48,9 +50,9 @@ const BookListItem = ({ book }: BookListItemProps) => {
         <button 
           onClick={handleFavoriteToggle}
           className="p-1 rounded-full hover:bg-gray-100"
-          aria-label={book.isFavorite ? "Remove from favorites" : "Add to favorites"}
+          aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
         >
-          <Heart className={`h-5 w-5 ${book.isFavorite ? 'fill-book-favorite text-book-favorite' : 'text-gray-400'}`} />
+          <Heart className={`h-5 w-5 ${isFavorite ? 'fill-book-favorite text-book-favorite' : 'text-gray-400'}`} />
         </button>
         
         <button className="p-1 rounded-full hover:bg-gray-100">
