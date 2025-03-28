@@ -1,14 +1,26 @@
-
+import React, { useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { LayoutGrid, BookOpen, Search, BarChart2, BookMarked, ListTodo, CheckCircle, Heart } from "lucide-react";
 
 const Layout = () => {
   const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <aside className="w-56 border-r bg-sidebar flex flex-col">
+      {isSidebarOpen && (
+  <div 
+    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-10 md:hidden" 
+    onClick={toggleSidebar}
+  />
+)}
+      <aside className={`w-56 border-r bg-sidebar flex flex-col fixed top-0 left-0 bottom-0 z-20  
+                  transform transition-transform duration-300 ease-in-out shadow-md 
+                  ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
+                  md:translate-x-0 md:w-56 md:shadow-none`}>
         <div className="p-4 font-bold text-xl flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2">
             <BookOpen className="h-5 w-5" />
@@ -105,7 +117,11 @@ const Layout = () => {
       </aside>
       
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto w-full md:ml-56">
+      <button className="fixed top-4 right-4 z-20 md:hidden py-3 px-4 bg-sidebar rounded " onClick={toggleSidebar}>
+  ☰
+</button>
+
         <Outlet />
       </main>
     </div>
