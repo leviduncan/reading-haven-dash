@@ -1,4 +1,3 @@
-
 import { Book, Review, ReadingStats, ReadingChallenge } from './types';
 
 export const mockBooks: Book[] = [
@@ -24,7 +23,7 @@ export const mockBooks: Book[] = [
     title: 'Project Hail Mary',
     author: 'Andy Weir',
     coverImage: 'https://m.media-amazon.com/images/I/91vk+qo5y1L._AC_UF1000,1000_QL80_.jpg',
-    description: 'Ryland Grace is the sole survivor on a desperate, last-chance mission—and if he fails, humanity and the Earth itself will perish. Except that right now, he doesn't know that. He can't even remember his own name, let alone the nature of his assignment or how to complete it. All he knows is that he's been asleep for a very, very long time. And he's just been awakened to find himself millions of miles from home, with nothing but two corpses for company.',
+    description: "Ryland Grace is the sole survivor on a desperate, last-chance mission—and if he fails, humanity and the Earth itself will perish. Except that right now, he doesn't know that. He can't even remember his own name, let alone the nature of his assignment or how to complete it. All he knows is that he's been asleep for a very, very long time. And he's just been awakened to find himself millions of miles from home, with nothing but two corpses for company.",
     genre: 'Science Fiction',
     pageCount: 496,
     progress: {
@@ -41,7 +40,7 @@ export const mockBooks: Book[] = [
     title: 'Atomic Habits',
     author: 'James Clear',
     coverImage: 'https://m.media-amazon.com/images/I/81wgcld4wxL._AC_UF1000,1000_QL80_.jpg',
-    description: 'No matter your goals, Atomic Habits offers a proven framework for improving--every day. James Clear, one of the world\'s leading experts on habit formation, reveals practical strategies that will teach you exactly how to form good habits, break bad ones, and master the tiny behaviors that lead to remarkable results.',
+    description: "No matter your goals, Atomic Habits offers a proven framework for improving--every day. James Clear, one of the world's leading experts on habit formation, reveals practical strategies that will teach you exactly how to form good habits, break bad ones, and master the tiny behaviors that lead to remarkable results.",
     genre: 'Self-Help',
     pageCount: 320,
     progress: {
@@ -225,7 +224,6 @@ export const mockReadingChallenge: ReadingChallenge = {
 };
 
 export const getDiscoverBooks = () => {
-  // This would be an API call in a real app
   return [
     {
       id: '101',
