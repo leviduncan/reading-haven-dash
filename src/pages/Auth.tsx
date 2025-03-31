@@ -52,7 +52,12 @@ const Auth = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-200 auth">
+      <div className="text-white h-full mx-auto max-w-7xl p-6 flex flex-col justify-center items-center mb-8">
+        {/* <img src="/logo.png" alt="BookTracker Logo" className="mb-4 w-24 h-24" /> */}
+        <h1 className="text-4xl md:text-5xl font-bold">Welcome to BookTracker</h1>
+        <p className="text-lg">Keep track of your reading progress</p>
+      </div>
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">
@@ -71,7 +76,7 @@ const Auth = () => {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            
+
             {!isLogin && (
               <div className="space-y-2">
                 <label htmlFor="username" className="text-sm font-medium">
@@ -88,7 +93,7 @@ const Auth = () => {
                 />
               </div>
             )}
-            
+
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium">
                 Email
@@ -103,7 +108,7 @@ const Auth = () => {
                 required
               />
             </div>
-            
+
             <div className="space-y-2">
               <label htmlFor="password" className="text-sm font-medium">
                 Password
@@ -118,13 +123,13 @@ const Auth = () => {
                 required
               />
             </div>
-            
+
             <Button type="submit" className="w-full" disabled={loading}>
               {loading
                 ? "Loading..."
                 : isLogin
-                ? "Sign In"
-                : "Create Account"}
+                  ? "Sign In"
+                  : "Create Account"}
             </Button>
           </form>
         </CardContent>

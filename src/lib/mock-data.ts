@@ -3,6 +3,7 @@ import { Book, Review, ReadingStats, ReadingChallenge } from './types';
 export const mockBooks: Book[] = [
   {
     id: '1',
+    user_id: '',
     title: 'The Midnight Library',
     author: 'Matt Haig',
     coverImage: 'https://m.media-amazon.com/images/I/81tCtHFtOgL._AC_UF1000,1000_QL80_.jpg',
@@ -20,6 +21,7 @@ export const mockBooks: Book[] = [
   },
   {
     id: '2',
+    user_id: '',
     title: 'Project Hail Mary',
     author: 'Andy Weir',
     coverImage: 'https://m.media-amazon.com/images/I/91vS2L5YfEL._SX342_.jpg',
@@ -37,6 +39,7 @@ export const mockBooks: Book[] = [
   },
   {
     id: '3',
+    user_id: '',
     title: 'Atomic Habits',
     author: 'James Clear',
     coverImage: 'https://m.media-amazon.com/images/I/81wgcld4wxL._AC_UF1000,1000_QL80_.jpg',
@@ -54,6 +57,7 @@ export const mockBooks: Book[] = [
   },
   {
     id: '4',
+    user_id: '',
     title: 'The Alchemist',
     author: 'Paulo Coelho',
     coverImage: 'https://m.media-amazon.com/images/I/51Z0nLAfLmL.jpg',
@@ -70,6 +74,7 @@ export const mockBooks: Book[] = [
   },
   {
     id: '5',
+    user_id: '',
     title: 'Sapiens',
     author: 'Yuval Noah Harari',
     coverImage: 'https://m.media-amazon.com/images/I/81tPEe0egBL._SL1500_.jpg',
@@ -86,6 +91,7 @@ export const mockBooks: Book[] = [
   },
   {
     id: '6',
+    user_id: '',
     title: 'Educated',
     author: 'Tara Westover',
     coverImage: 'https://m.media-amazon.com/images/I/81NwOj14S6L._AC_UF1000,1000_QL80_.jpg',
@@ -99,6 +105,7 @@ export const mockBooks: Book[] = [
   },
   {
     id: '7',
+    user_id: '',
     title: 'Tomorrow, and Tomorrow, and Tomorrow',
     author: 'Gabrielle Zevin',
     coverImage: 'https://m.media-amazon.com/images/I/91Lu2eTVdWL._SX342_.jpg',
@@ -112,6 +119,7 @@ export const mockBooks: Book[] = [
   },
   {
     id: '8',
+    user_id: '',
     title: 'The Lincoln Highway',
     author: 'Amor Towles',
     coverImage: 'https://m.media-amazon.com/images/I/81CtC8UNeIL._SX342_.jpg',
@@ -125,6 +133,7 @@ export const mockBooks: Book[] = [
   },
   {
     id: '9',
+    user_id: '',
     title: 'Cloud Cuckoo Land',
     author: 'Anthony Doerr',
     coverImage: 'https://m.media-amazon.com/images/I/91IV2caBbpL._SX342_.jpg',
@@ -138,6 +147,7 @@ export const mockBooks: Book[] = [
   },
   {
     id: '10',
+    user_id: '',
     title: 'Sea of Tranquility',
     author: 'Emily St. John Mandel',
     coverImage: 'https://m.media-amazon.com/images/I/51-aB6gtJZL._SY445_SX342_.jpg',
@@ -151,6 +161,7 @@ export const mockBooks: Book[] = [
   },
   {
     id: '11',
+    user_id: '',
     title: 'Klara and the Sun',
     author: 'Kazuo Ishiguro',
     coverImage: 'https://m.media-amazon.com/images/I/71jAx4kY9BL._SL1500_.jpg',
@@ -172,6 +183,7 @@ export const mockReviews: Review[] = [
   {
     id: '1',
     bookId: '4',
+    user_id: '',
     title: 'Thought-provoking and inspiring',
     content: 'This book blew me away. The perfect blend of philosophy and storytelling. I couldn\'t put it down and finished it in just two days.',
     rating: 5,
@@ -184,6 +196,7 @@ export const mockReviews: Review[] = [
   {
     id: '2',
     bookId: '5',
+    user_id: '',
     title: 'Mind-expanding history of humankind',
     content: 'A brilliant overview of human history that challenges many assumptions. Harari has a gift for making complex concepts accessible and thought-provoking.',
     rating: 5,
@@ -196,6 +209,7 @@ export const mockReviews: Review[] = [
   {
     id: '3',
     bookId: '2',
+    user_id: '',
     title: 'Brilliant sci-fi with heart',
     content: 'This book completely blew me away. The perfect blend of hard science and emotional storytelling. The protagonist is incredibly likable, and the way the story unfolds through present action and recovered memories is masterfully done. I couldn\'t put it down and finished it in just two days. Easily one of the best sci-fi novels I\'ve read in years.',
     rating: 5,
@@ -269,7 +283,8 @@ export const getPopularGenres = () => {
     { name: 'Science Fiction', count: 876 },
     { name: 'Self-Help', count: 654 },
     { name: 'History', count: 932 },
-    { name: 'Romance', count: 1087 }
+    { name: 'Romance', count: 1087 },
+    { name: 'Computer & Technology', count: 2800 }
   ];
 };
 

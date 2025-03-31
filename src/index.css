@@ -131,7 +131,12 @@
 
 .hero {
   background: linear-gradient(#20293780, #20293780), 
-              url('../public/hero04.webp') no-repeat center center/cover;
+              url('../hero04.webp') no-repeat center center/cover;
+}
+
+.auth {
+  background: linear-gradient(#20293780, #20293780), 
+  url('../hero06.webp') no-repeat center center/cover;
 }
 
 /* .hero {
