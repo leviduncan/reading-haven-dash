@@ -1,11 +1,15 @@
+
 import React, { useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { LayoutGrid, BookOpen, Search, BarChart2, BookMarked, ListTodo, CheckCircle, Heart } from "lucide-react";
 import Hero from "./Hero";
+import { useAuth } from "@/contexts/AuthContext";
+import UserAuthButtons from "./UserAuthButtons";
 
 const Layout = () => {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { user } = useAuth();
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -101,24 +105,13 @@ const Layout = () => {
           </NavLink>
         </nav>
 
-        {/* User Section */}
-        <div className="p-4 border-t flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
-            <img
-              src="https://ui-avatars.com/api/?name=Alex+Johnson&background=random"
-              alt="Alex Johnson"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-medium">Alex Johnson</span>
-            <span className="text-xs text-muted-foreground">alex@example.com</span>
-          </div>
+        {/* User Section - Updated to use UserAuthButtons which contains the user info */}
+        <div className="p-4 border-t">
+          <UserAuthButtons />
         </div>
       </aside>
 
       {/* Main Content */}
-
       <main className="flex-1 overflow-auto w-full md:ml-56">
         <Hero />
         <button className="fixed top-4 right-4 z-20 md:hidden py-3 px-4 bg-sidebar rounded " onClick={toggleSidebar}>
