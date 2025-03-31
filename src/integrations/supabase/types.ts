@@ -9,6 +9,66 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      books: {
+        Row: {
+          author: string
+          cover_image: string
+          current_page: number | null
+          date_added: string
+          description: string
+          finished_reading: string | null
+          genre: string
+          id: string
+          is_favorite: boolean | null
+          last_updated: string
+          page_count: number
+          progress_percentage: number | null
+          rating: number | null
+          started_reading: string | null
+          status: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          author: string
+          cover_image: string
+          current_page?: number | null
+          date_added?: string
+          description: string
+          finished_reading?: string | null
+          genre: string
+          id?: string
+          is_favorite?: boolean | null
+          last_updated?: string
+          page_count: number
+          progress_percentage?: number | null
+          rating?: number | null
+          started_reading?: string | null
+          status: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          author?: string
+          cover_image?: string
+          current_page?: number | null
+          date_added?: string
+          description?: string
+          finished_reading?: string | null
+          genre?: string
+          id?: string
+          is_favorite?: boolean | null
+          last_updated?: string
+          page_count?: number
+          progress_percentage?: number | null
+          rating?: number | null
+          started_reading?: string | null
+          status?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -32,6 +92,122 @@ export type Database = {
           username?: string | null
         }
         Relationships: []
+      }
+      reading_challenges: {
+        Row: {
+          created_at: string
+          current: number | null
+          id: string
+          name: string
+          percentage: number | null
+          target: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current?: number | null
+          id?: string
+          name: string
+          percentage?: number | null
+          target: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current?: number | null
+          id?: string
+          name?: string
+          percentage?: number | null
+          target?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      reading_stats: {
+        Row: {
+          average_rating: number | null
+          books_read: number | null
+          current_streak: number | null
+          id: string
+          last_updated: string
+          reading_time: number | null
+          total_pages: number | null
+          user_id: string
+        }
+        Insert: {
+          average_rating?: number | null
+          books_read?: number | null
+          current_streak?: number | null
+          id?: string
+          last_updated?: string
+          reading_time?: number | null
+          total_pages?: number | null
+          user_id: string
+        }
+        Update: {
+          average_rating?: number | null
+          books_read?: number | null
+          current_streak?: number | null
+          id?: string
+          last_updated?: string
+          reading_time?: number | null
+          total_pages?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          book_id: string
+          content: string
+          created_at: string
+          date_finished: string | null
+          date_started: string | null
+          id: string
+          is_favorite: boolean | null
+          is_public: boolean | null
+          rating: number
+          title: string
+          user_id: string
+        }
+        Insert: {
+          book_id: string
+          content: string
+          created_at?: string
+          date_finished?: string | null
+          date_started?: string | null
+          id?: string
+          is_favorite?: boolean | null
+          is_public?: boolean | null
+          rating: number
+          title: string
+          user_id: string
+        }
+        Update: {
+          book_id?: string
+          content?: string
+          created_at?: string
+          date_finished?: string | null
+          date_started?: string | null
+          id?: string
+          is_favorite?: boolean | null
+          is_public?: boolean | null
+          rating?: number
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

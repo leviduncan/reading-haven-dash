@@ -1,43 +1,66 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Book } from "@/lib/types";
-import { mockBooks, mockReadingStats, getRecentActivity } from "@/lib/mock-data";
+import { Book, ReadingStats } from "@/lib/types";
+import { getRecentActivity } from "@/lib/mock-data";
 import BookCard from "@/components/BookCard";
 import StatCard from "@/components/StatCard";
 import ActivityItem from "@/components/ActivityItem";
 import { BookOpen, Clock, BarChart2, Star, Search, Heart } from "lucide-react";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { toggleFavorite } from "@/lib/redux/slices/favoritesSlice";
+import { useAuth } from "@/contexts/AuthContext";
+import { fetchBooksByStatus } from "@/services/bookService";
+import { fetchReadingStats } from "@/services/readingService";
 import { toast } from "@/components/ui/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const Dashboard = () => {
   const [currentlyReading, setCurrentlyReading] = useState<Book[]>([]);
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
-  const dispatch = useAppDispatch();
-  const { favorites } = useAppSelector(state => state.favorites);
+  const [readingStats, setReadingStats] = useState<ReadingStats | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showAddFirstBook, setShowAddFirstBook] = useState(false);
+  const { user } = useAuth();
   
   useEffect(() => {
-    // Filter books that are currently being read (limit to 3)
-    const reading = mockBooks.filter(book => book.status === 'currently-reading').slice(0, 3);
-    setCurrentlyReading(reading);
+    const loadData = async () => {
+      setIsLoading(true);
+      try {
+        // Fetch currently reading books
+        const books = await fetchBooksByStatus('currently-reading');
+        setCurrentlyReading(books.slice(0, 3));
+        
+        // Fetch reading stats
+        const stats = await fetchReadingStats();
+        if (stats) {
+          setReadingStats(stats);
+        }
+        
+        // Get recent activity data (still using mock for now)
+        setRecentActivity(getRecentActivity());
+        
+        // Show dialog if user has no books
+        if (books.length === 0) {
+          setShowAddFirstBook(true);
+        }
+      } catch (error) {
+        console.error("Error loading dashboard data:", error);
+        toast({
+          title: "Error loading data",
+          description: "Failed to load your dashboard data",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
     
-    // Get recent activity data
-    setRecentActivity(getRecentActivity());
+    loadData();
   }, []);
 
   const handleToggleFavorite = (bookId: string) => {
-    dispatch(toggleFavorite(bookId));
-    
-    const book = mockBooks.find(book => book.id === bookId);
-    const isFavorite = favorites.some(b => b.id === bookId);
-    
-    toast({
-      title: isFavorite ? "Removed from favorites" : "Added to favorites",
-      description: isFavorite 
-        ? `${book?.title} has been removed from your favorites.` 
-        : `${book?.title} has been added to your favorites.`,
-    });
+    // This will be updated in a future implementation
+    console.log('Toggle favorite for book:', bookId);
   };
   
   return (
@@ -55,14 +78,18 @@ const Dashboard = () => {
           </Link>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {currentlyReading.map(book => {
-            const isFavorite = favorites.some(b => b.id === book.id);
-            
-            return (
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-72 bg-gray-100 animate-pulse rounded-lg"></div>
+            ))}
+          </div>
+        ) : currentlyReading.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {currentlyReading.map(book => (
               <BookCard 
                 key={book.id} 
-                book={{...book, isFavorite}}
+                book={book}
                 showProgress={true}
                 actionButtons={
                   <div className="w-full flex flex-col gap-2">
@@ -76,15 +103,25 @@ const Dashboard = () => {
                       onClick={() => handleToggleFavorite(book.id)}
                       className="w-full text-center px-4 py-2 rounded-md border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
                     >
-                      <Heart className={`h-4 w-4 ${isFavorite ? 'fill-book-favorite text-book-favorite' : ''}`} />
-                      {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+                      <Heart className={`h-4 w-4 ${book.isFavorite ? 'fill-book-favorite text-book-favorite' : ''}`} />
+                      {book.isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
                     </button>
                   </div>
                 }
               />
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 bg-gray-50 rounded-lg">
+            <p className="text-lg text-muted-foreground mb-4">You're not currently reading any books.</p>
+            <Link
+              to="/discover"
+              className="px-5 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              Find Books to Read
+            </Link>
+          </div>
+        )}
       </section>
       
       {/* Reading Stats Section */}
@@ -93,25 +130,25 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard 
             icon={<BookOpen className="h-5 w-5" />}
-            value={mockReadingStats.booksRead}
+            value={readingStats?.booksRead || 0}
             label="Books Read this year"
           />
           
           <StatCard 
             icon={<Clock className="h-5 w-5" />}
-            value={mockReadingStats.readingTime}
+            value={readingStats?.readingTime || 0}
             label="Total reading time"
           />
           
           <StatCard 
             icon={<BarChart2 className="h-5 w-5" />}
-            value={mockReadingStats.currentStreak}
+            value={readingStats?.currentStreak || 0}
             label="Current streak"
           />
           
           <StatCard 
             icon={<Star className="h-5 w-5" />}
-            value={mockReadingStats.averageRating}
+            value={readingStats?.averageRating || 0}
             label="Average rating"
           />
         </div>
@@ -135,21 +172,9 @@ const Dashboard = () => {
               className="w-full border border-gray-300 rounded-lg py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
-          <button className="ml-4 px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
+          <Link to="/discover" className="ml-4 px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
             Search
-          </button>
-        </div>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {mockBooks.slice(0, 4).map(book => (
-            <div key={book.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <img 
-                src={book.coverImage} 
-                alt={book.title}
-                className="w-full h-48 object-cover"
-              />
-            </div>
-          ))}
+          </Link>
         </div>
       </section>
       
@@ -157,19 +182,50 @@ const Dashboard = () => {
       <section>
         <h2 className="section-heading mb-4">Recent Activity</h2>
         <div className="bg-white rounded-lg shadow-sm p-4">
-          {recentActivity.map((activity) => (
-            <ActivityItem 
-              key={activity.id}
-              id={activity.id}
-              type={activity.type}
-              book={activity.book}
-              date={activity.date}
-              shelf={activity.shelf}
-              rating={activity.rating}
-            />
-          ))}
+          {recentActivity.length > 0 ? (
+            recentActivity.map((activity) => (
+              <ActivityItem 
+                key={activity.id}
+                id={activity.id}
+                type={activity.type}
+                book={activity.book}
+                date={activity.date}
+                shelf={activity.shelf}
+                rating={activity.rating}
+              />
+            ))
+          ) : (
+            <div className="text-center py-6">
+              <p className="text-muted-foreground">No recent activity to show</p>
+            </div>
+          )}
         </div>
       </section>
+
+      {/* First book dialog */}
+      <Dialog open={showAddFirstBook} onOpenChange={setShowAddFirstBook}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Welcome to your reading journey!</DialogTitle>
+            <DialogDescription>
+              Start by adding your first book to your collection.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="mb-4">
+              Your personal library is empty. Add books to track your reading progress, set goals, and keep a record of your literary journey.
+            </p>
+          </div>
+          <DialogFooter>
+            <Link to="/discover">
+              <Button variant="outline">Browse Books</Button>
+            </Link>
+            <Link to="/add-book">
+              <Button>Add Your First Book</Button>
+            </Link>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

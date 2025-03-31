@@ -17,6 +17,7 @@ import WantToRead from "./pages/WantToRead";
 import Completed from "./pages/Completed";
 import Favorites from "./pages/Favorites";
 import AddReview from "./pages/AddReview";
+import AddBook from "./pages/AddBook";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -46,6 +47,7 @@ const App = () => (
                 <Route path="discover" element={<Discover />} />
                 <Route path="reading-stats" element={<ReadingStats />} />
                 <Route path="book/:id" element={<BookDetails />} />
+                <Route path="add-book" element={<AddBook />} />
                 <Route path="currently-reading" element={<CurrentlyReading />} />
                 <Route path="want-to-read" element={<WantToRead />} />
                 <Route path="completed" element={<Completed />} />
