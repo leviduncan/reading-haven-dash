@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { createBook } from "@/services/bookService";
@@ -9,11 +9,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { supabase } from "@/integrations/supabase/client";
+import { Upload, Image as ImageIcon, X } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 const AddBook = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [formData, setFormData] = useState({
     title: "",
@@ -25,6 +30,8 @@ const AddBook = () => {
     status: "want-to-read" as BookStatus
   });
 
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -32,6 +39,70 @@ const AddBook = () => {
 
   const handleStatusChange = (value: string) => {
     setFormData(prev => ({ ...prev, status: value as BookStatus }));
+  };
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    // Image preview
+    const imageUrl = URL.createObjectURL(file);
+    setPreviewImage(imageUrl);
+
+    try {
+      setIsUploading(true);
+      
+      // Upload to Supabase storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${user.id}/${fileName}`;
+      
+      const { error: uploadError, data } = await supabase.storage
+        .from('book-covers')
+        .upload(filePath, file);
+      
+      if (uploadError) {
+        throw uploadError;
+      }
+      
+      // Get public URL
+      const { data: publicUrlData } = supabase.storage
+        .from('book-covers')
+        .getPublicUrl(filePath);
+      
+      if (publicUrlData) {
+        setFormData(prev => ({ ...prev, coverImage: publicUrlData.publicUrl }));
+      }
+      
+      toast({
+        title: "Image uploaded",
+        description: "Book cover image uploaded successfully"
+      });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast({
+        title: "Upload failed",
+        description: "Failed to upload cover image",
+        variant: "destructive"
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setPreviewImage(null);
+    setFormData(prev => ({ 
+      ...prev, 
+      coverImage: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Ym9vayUyMGNvdmVyfGVufDB8fDB8fHww" 
+    }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -122,18 +193,60 @@ const AddBook = () => {
             </div>
             
             <div>
-              <Label htmlFor="coverImage">Cover Image URL</Label>
-              <Input
-                id="coverImage"
-                name="coverImage"
-                type="url"
-                value={formData.coverImage}
-                onChange={handleChange}
-                placeholder="https://example.com/book-cover.jpg"
-              />
-              <p className="text-sm text-muted-foreground mt-1">
-                Leave blank to use a default cover
-              </p>
+              <Label htmlFor="coverImage">Cover Image</Label>
+              <div className="mt-2 flex flex-col items-center">
+                <input 
+                  type="file" 
+                  ref={fileInputRef}
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+                
+                <div 
+                  className="relative w-full h-48 border-2 border-dashed rounded-md flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={handleImageClick}
+                >
+                  {previewImage || formData.coverImage !== "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Ym9vayUyMGNvdmVyfGVufDB8fDB8fHww" ? (
+                    <div className="relative w-full h-full">
+                      <img 
+                        src={previewImage || formData.coverImage} 
+                        alt="Book cover" 
+                        className="w-full h-full object-contain"
+                      />
+                      <button 
+                        type="button"
+                        className="absolute top-2 right-2 rounded-full bg-background/80 p-1 hover:bg-background"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveImage();
+                        }}
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      {isUploading ? (
+                        <div className="text-center">
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
+                          <p className="mt-2 text-sm">Uploading...</p>
+                        </div>
+                      ) : (
+                        <>
+                          <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                          <p className="text-sm text-muted-foreground">Click to upload a cover image</p>
+                          <p className="text-xs text-muted-foreground mt-1">PNG, JPG or WEBP (max 5MB)</p>
+                        </>
+                      )}
+                    </>
+                  )}
+                </div>
+                
+                <p className="text-xs text-muted-foreground mt-1 text-center">
+                  A default cover will be used if none is provided
+                </p>
+              </div>
             </div>
           </div>
           
@@ -184,7 +297,7 @@ const AddBook = () => {
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting || isUploading}>
             {isSubmitting ? "Adding..." : "Add Book"}
           </Button>
         </div>
