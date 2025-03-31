@@ -22,7 +22,8 @@ export const mapDbReviewToReview = (dbReview: DbReview): Review => {
 
 // Convert application review to database review
 export const mapReviewToDbReview = (review: Partial<Review>, userId: string): Partial<DbReview> => {
-  return {
+  // Make sure all required fields are present
+  const dbReview: Partial<DbReview> = {
     user_id: userId,
     book_id: review.bookId!,
     title: review.title!,
@@ -33,6 +34,8 @@ export const mapReviewToDbReview = (review: Partial<Review>, userId: string): Pa
     is_public: review.isPublic ?? true,
     is_favorite: review.isFavorite ?? false
   };
+  
+  return dbReview;
 };
 
 export const fetchReviewsByBookId = async (bookId: string): Promise<Review[]> => {
@@ -53,7 +56,7 @@ export const fetchReviewsByBookId = async (bookId: string): Promise<Review[]> =>
       return [];
     }
 
-    return (data || []).map(mapDbReviewToReview);
+    return (data || []).map(review => mapDbReviewToReview(review as DbReview));
   } catch (err) {
     console.error("Unexpected error fetching reviews:", err);
     toast({
@@ -68,6 +71,17 @@ export const fetchReviewsByBookId = async (bookId: string): Promise<Review[]> =>
 export const createReview = async (review: Partial<Review>, userId: string): Promise<Review | null> => {
   try {
     const dbReview = mapReviewToDbReview(review, userId);
+    
+    // Validate required fields
+    if (!dbReview.book_id || !dbReview.title || !dbReview.content || 
+        dbReview.rating === undefined || dbReview.rating === null) {
+      toast({
+        title: "Error creating review",
+        description: "Required fields are missing",
+        variant: "destructive"
+      });
+      return null;
+    }
     
     const { data, error } = await supabase
       .from('reviews')
@@ -90,7 +104,7 @@ export const createReview = async (review: Partial<Review>, userId: string): Pro
       description: "Your review has been added successfully"
     });
 
-    return mapDbReviewToReview(data);
+    return mapDbReviewToReview(data as DbReview);
   } catch (err) {
     console.error("Unexpected error creating review:", err);
     toast({
@@ -128,7 +142,7 @@ export const updateReview = async (id: string, review: Partial<Review>, userId: 
       description: "Your review has been updated successfully"
     });
 
-    return mapDbReviewToReview(data);
+    return mapDbReviewToReview(data as DbReview);
   } catch (err) {
     console.error("Unexpected error updating review:", err);
     toast({

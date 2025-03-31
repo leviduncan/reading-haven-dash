@@ -15,7 +15,7 @@ export interface DbBook {
   started_reading: string | null;
   finished_reading: string | null;
   rating: number | null;
-  status: BookStatus;
+  status: BookStatus; // Ensure this is the correct type
   is_favorite: boolean;
   date_added: string;
   last_updated: string;

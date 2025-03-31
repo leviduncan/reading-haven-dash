@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Book } from "@/lib/types";
 import { DbBook, BookStatus } from "@/types/supabase";
@@ -30,6 +29,8 @@ export const mapDbBookToBook = (dbBook: DbBook): Book => {
 
 // Convert application book to database book
 export const mapBookToDbBook = (book: Partial<Book>, userId: string): Partial<DbBook> => {
+  const status = book.status as BookStatus;
+  
   return {
     user_id: userId,
     title: book.title,
@@ -43,7 +44,7 @@ export const mapBookToDbBook = (book: Partial<Book>, userId: string): Partial<Db
     started_reading: book.startedReading || null,
     finished_reading: book.finishedReading || null,
     rating: book.rating || null,
-    status: book.status as BookStatus,
+    status: status,
     is_favorite: book.isFavorite
   };
 };
@@ -125,7 +126,7 @@ export const fetchBook = async (id: string): Promise<Book | null> => {
       return null;
     }
 
-    return mapDbBookToBook(data);
+    return mapDbBookToBook(data as DbBook);
   } catch (err) {
     console.error("Unexpected error fetching book:", err);
     toast({
@@ -140,6 +141,16 @@ export const fetchBook = async (id: string): Promise<Book | null> => {
 export const createBook = async (book: Partial<Book>, userId: string): Promise<Book | null> => {
   try {
     const dbBook = mapBookToDbBook(book, userId);
+    
+    if (!dbBook.title || !dbBook.author || !dbBook.cover_image || !dbBook.description || 
+        !dbBook.genre || !dbBook.page_count || !dbBook.status) {
+      toast({
+        title: "Error creating book",
+        description: "Required fields are missing",
+        variant: "destructive"
+      });
+      return null;
+    }
     
     const { data, error } = await supabase
       .from('books')
@@ -162,7 +173,7 @@ export const createBook = async (book: Partial<Book>, userId: string): Promise<B
       description: "Your book has been added successfully"
     });
 
-    return mapDbBookToBook(data);
+    return mapDbBookToBook(data as DbBook);
   } catch (err) {
     console.error("Unexpected error creating book:", err);
     toast({
@@ -203,7 +214,7 @@ export const updateBook = async (id: string, book: Partial<Book>, userId: string
       description: "Your book has been updated successfully"
     });
 
-    return mapDbBookToBook(data);
+    return mapDbBookToBook(data as DbBook);
   } catch (err) {
     console.error("Unexpected error updating book:", err);
     toast({
@@ -244,7 +255,7 @@ export const updateBookProgress = async (
       return null;
     }
 
-    return mapDbBookToBook(data);
+    return mapDbBookToBook(data as DbBook);
   } catch (err) {
     console.error("Unexpected error updating book progress:", err);
     toast({
@@ -278,7 +289,7 @@ export const toggleBookFavorite = async (id: string, isFavorite: boolean): Promi
       return null;
     }
 
-    return mapDbBookToBook(data);
+    return mapDbBookToBook(data as DbBook);
   } catch (err) {
     console.error("Unexpected error toggling favorite status:", err);
     toast({
