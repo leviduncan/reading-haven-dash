@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Book } from "@/lib/types";
 import { DbBook, BookStatus } from "@/types/supabase";
@@ -142,6 +143,7 @@ export const createBook = async (book: Partial<Book>, userId: string): Promise<B
   try {
     const dbBook = mapBookToDbBook(book, userId);
     
+    // Validate required fields
     if (!dbBook.title || !dbBook.author || !dbBook.cover_image || !dbBook.description || 
         !dbBook.genre || !dbBook.page_count || !dbBook.status) {
       toast({
@@ -152,9 +154,27 @@ export const createBook = async (book: Partial<Book>, userId: string): Promise<B
       return null;
     }
     
+    // Cast to the expected type for insert operation
+    const insertData = {
+      user_id: userId,
+      title: dbBook.title,
+      author: dbBook.author,
+      cover_image: dbBook.cover_image,
+      description: dbBook.description,
+      genre: dbBook.genre,
+      page_count: dbBook.page_count,
+      current_page: dbBook.current_page,
+      progress_percentage: dbBook.progress_percentage,
+      started_reading: dbBook.started_reading,
+      finished_reading: dbBook.finished_reading,
+      rating: dbBook.rating,
+      status: dbBook.status,
+      is_favorite: dbBook.is_favorite
+    };
+    
     const { data, error } = await supabase
       .from('books')
-      .insert(dbBook)
+      .insert(insertData)
       .select()
       .single();
 

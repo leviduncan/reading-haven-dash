@@ -83,9 +83,22 @@ export const createReview = async (review: Partial<Review>, userId: string): Pro
       return null;
     }
     
+    // Create a complete object with all required fields for insert
+    const insertData = {
+      user_id: userId,
+      book_id: dbReview.book_id,
+      title: dbReview.title,
+      content: dbReview.content,
+      rating: dbReview.rating,
+      date_started: dbReview.date_started,
+      date_finished: dbReview.date_finished,
+      is_public: dbReview.is_public,
+      is_favorite: dbReview.is_favorite
+    };
+    
     const { data, error } = await supabase
       .from('reviews')
-      .insert(dbReview)
+      .insert(insertData)
       .select()
       .single();
 
