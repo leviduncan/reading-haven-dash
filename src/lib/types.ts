@@ -1,6 +1,7 @@
 
 export interface Book {
   id: string;
+  user_id?: string; // Added user_id as optional
   title: string;
   author: string;
   coverImage: string;
@@ -23,6 +24,7 @@ export interface Book {
 export interface Review {
   id: string;
   bookId: string;
+  user_id?: string; // Added user_id as optional
   title: string;
   content: string;
   rating: number;
