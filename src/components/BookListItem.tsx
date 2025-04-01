@@ -18,7 +18,10 @@ const BookListItem = ({ book, onFavoriteToggle }: BookListItemProps) => {
   const [isFavorite, setIsFavorite] = useState(book.isFavorite);
   const [isUpdating, setIsUpdating] = useState(false);
   
-  const handleFavoriteToggle = async () => {
+  const handleFavoriteToggle = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
     if (!user || isUpdating) return;
     
     setIsUpdating(true);
