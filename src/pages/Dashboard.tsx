@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Book, ReadingStats } from "@/lib/types";
@@ -12,6 +13,7 @@ import { fetchReadingStats } from "@/services/readingService";
 import { toast } from "@/components/ui/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 const Dashboard = () => {
   const [currentlyReading, setCurrentlyReading] = useState<Book[]>([]);
@@ -73,6 +75,42 @@ const Dashboard = () => {
           ? "The book has been added to your favorites." 
           : "The book has been removed from your favorites."
       });
+    }
+  };
+
+  const handleAddToList = async (bookId: string) => {
+    if (!user) return;
+    
+    try {
+      // Refetch the currently reading books after status change
+      const books = await fetchBooksByStatus('currently-reading');
+      setCurrentlyReading(books.slice(0, 3));
+      
+      // Refresh reading stats
+      const stats = await fetchReadingStats();
+      if (stats) {
+        setReadingStats(stats);
+      }
+    } catch (error) {
+      console.error("Error refreshing data after adding to list:", error);
+    }
+  };
+  
+  const handleStartReading = async (bookId: string) => {
+    if (!user) return;
+    
+    try {
+      // Refetch the currently reading books after status change
+      const books = await fetchBooksByStatus('currently-reading');
+      setCurrentlyReading(books.slice(0, 3));
+      
+      // Refresh reading stats
+      const stats = await fetchReadingStats();
+      if (stats) {
+        setReadingStats(stats);
+      }
+    } catch (error) {
+      console.error("Error refreshing data after starting reading:", error);
     }
   };
   
