@@ -2,9 +2,9 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { FavoriteStatsCard } from "./FavoriteStatsCard";
+import FavoriteStatsCard from "./FavoriteStatsCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Book } from "@/lib/lib/types";
+import { Book } from "@/lib/types";
 
 const CollectionOverview = () => {
   const { user } = useAuth();
@@ -101,29 +101,31 @@ const CollectionOverview = () => {
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <FavoriteStatsCard
-          title="Total Favorites"
-          value={stats.totalFavorites}
           icon="heart"
+          value={stats.totalFavorites}
+          label="Total Favorites"
+          sublabel="Books you love"
         />
         
         <FavoriteStatsCard
-          title="Top Genre"
+          icon="book"
           value={stats.topGenre.name || "None"}
-          subtitle={stats.topGenre.count > 0 ? `${stats.topGenre.count} books` : ""}
-          icon="bookmark"
+          label="Top Genre"
+          sublabel={stats.topGenre.count > 0 ? `${stats.topGenre.count} books` : ""}
         />
         
         <FavoriteStatsCard
-          title="Favorite Author"
-          value={stats.favoriteAuthor.name || "None"}
-          subtitle={stats.favoriteAuthor.count > 0 ? `${stats.favoriteAuthor.count} books` : ""}
           icon="user"
+          value={stats.favoriteAuthor.name || "None"}
+          label="Favorite Author"
+          sublabel={stats.favoriteAuthor.count > 0 ? `${stats.favoriteAuthor.count} books` : ""}
         />
         
         <FavoriteStatsCard
-          title="Average Rating"
+          icon="library"
           value={stats.averageRating > 0 ? stats.averageRating.toFixed(1) : "No ratings"}
-          icon="star"
+          label="Average Rating"
+          sublabel="Of your favorites"
         />
       </div>
     </section>
