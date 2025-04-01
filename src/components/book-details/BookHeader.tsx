@@ -3,27 +3,57 @@ import { Book } from "@/lib/types";
 import { Link } from "react-router-dom";
 import { User, BookOpen, Calendar, Heart, Star } from "lucide-react";
 import StarRating from "@/components/StarRating";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { toggleFavorite } from "@/lib/redux/slices/favoritesSlice";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/components/ui/use-toast";
+import { useState } from "react";
 
 interface BookHeaderProps {
   book: Book;
 }
 
 const BookHeader = ({ book }: BookHeaderProps) => {
-  const dispatch = useAppDispatch();
-  const favoriteBooks = useAppSelector(state => state.favorites.favorites);
-  const isFavorite = favoriteBooks.some(b => b.id === book.id);
+  const { user } = useAuth();
+  const [isFavorite, setIsFavorite] = useState(book.isFavorite);
+  const [isUpdating, setIsUpdating] = useState(false);
   
-  const handleToggleFavorite = () => {
-    dispatch(toggleFavorite(book.id));
-    toast({
-      title: isFavorite ? "Removed from favorites" : "Added to favorites",
-      description: isFavorite 
-        ? "The book has been removed from your favorites." 
-        : "The book has been added to your favorites.",
-    });
+  const handleToggleFavorite = async () => {
+    if (!user || isUpdating) return;
+    
+    setIsUpdating(true);
+    try {
+      const newFavoriteStatus = !isFavorite;
+      
+      // Update the book in Supabase
+      const { error } = await supabase
+        .from('books')
+        .update({ 
+          is_favorite: newFavoriteStatus,
+          last_updated: new Date().toISOString()
+        })
+        .eq('id', book.id);
+
+      if (error) throw error;
+      
+      // Update local state
+      setIsFavorite(newFavoriteStatus);
+      
+      toast({
+        title: newFavoriteStatus ? "Added to favorites" : "Removed from favorites",
+        description: newFavoriteStatus 
+          ? "The book has been added to your favorites." 
+          : "The book has been removed from your favorites.",
+      });
+    } catch (error: any) {
+      console.error("Error toggling favorite status:", error.message);
+      toast({
+        title: "Error updating favorite status",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   return (
@@ -88,6 +118,7 @@ const BookHeader = ({ book }: BookHeaderProps) => {
             <button 
               onClick={handleToggleFavorite}
               className="px-6 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors flex items-center gap-2"
+              disabled={isUpdating}
             >
               <Heart className={`h-5 w-5 ${isFavorite ? 'fill-book-favorite text-book-favorite' : ''}`} />
               <span>{isFavorite ? 'Favorited' : 'Add to Favorites'}</span>

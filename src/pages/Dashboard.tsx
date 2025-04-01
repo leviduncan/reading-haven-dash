@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Book, ReadingStats } from "@/lib/types";
@@ -8,7 +7,7 @@ import StatCard from "@/components/StatCard";
 import ActivityItem from "@/components/ActivityItem";
 import { BookOpen, Clock, BarChart2, Star, Search, Heart } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { fetchBooksByStatus } from "@/services/bookService";
+import { fetchBooksByStatus, toggleBookFavorite } from "@/services/bookService";
 import { fetchReadingStats } from "@/services/readingService";
 import { toast } from "@/components/ui/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -26,20 +25,16 @@ const Dashboard = () => {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        // Fetch currently reading books
         const books = await fetchBooksByStatus('currently-reading');
         setCurrentlyReading(books.slice(0, 3));
         
-        // Fetch reading stats
         const stats = await fetchReadingStats();
         if (stats) {
           setReadingStats(stats);
         }
         
-        // Get recent activity data (still using mock for now)
         setRecentActivity(getRecentActivity());
         
-        // Show dialog if user has no books
         if (books.length === 0) {
           setShowAddFirstBook(true);
         }
@@ -58,9 +53,27 @@ const Dashboard = () => {
     loadData();
   }, []);
 
-  const handleToggleFavorite = (bookId: string) => {
-    // This will be updated in a future implementation
-    console.log('Toggle favorite for book:', bookId);
+  const handleToggleFavorite = async (bookId: string, currentStatus: boolean) => {
+    if (!user) return;
+    
+    const newStatus = !currentStatus;
+    
+    const updatedBook = await toggleBookFavorite(bookId, newStatus);
+    
+    if (updatedBook) {
+      setCurrentlyReading(prev => 
+        prev.map(book => 
+          book.id === bookId ? { ...book, isFavorite: newStatus } : book
+        )
+      );
+      
+      toast({
+        title: newStatus ? "Added to favorites" : "Removed from favorites",
+        description: newStatus 
+          ? "The book has been added to your favorites." 
+          : "The book has been removed from your favorites."
+      });
+    }
   };
   
   return (
@@ -100,7 +113,7 @@ const Dashboard = () => {
                       Continue Reading
                     </Link>
                     <button
-                      onClick={() => handleToggleFavorite(book.id)}
+                      onClick={() => handleToggleFavorite(book.id, book.isFavorite)}
                       className="w-full text-center px-4 py-2 rounded-md border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
                     >
                       <Heart className={`h-4 w-4 ${book.isFavorite ? 'fill-book-favorite text-book-favorite' : ''}`} />

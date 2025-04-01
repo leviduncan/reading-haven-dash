@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Book } from "@/lib/types";
@@ -68,10 +67,6 @@ const FavoritesTable = () => {
   
   const handleFavoriteToggle = async (bookId: string) => {
     try {
-      // Find the book and toggle its favorite status
-      const bookToUpdate = favorites.find(book => book.id === bookId);
-      if (!bookToUpdate) return;
-      
       // Update the book's favorite status in Supabase
       const { error } = await supabase
         .from('books')
@@ -79,8 +74,7 @@ const FavoritesTable = () => {
           is_favorite: false,
           last_updated: new Date().toISOString()
         })
-        .eq('id', bookId)
-        .eq('user_id', user?.id);
+        .eq('id', bookId);
       
       if (error) {
         throw error;

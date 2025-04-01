@@ -31,8 +31,7 @@ const BookListItem = ({ book, onFavoriteToggle }: BookListItemProps) => {
           is_favorite: newFavoriteStatus,
           last_updated: new Date().toISOString()
         })
-        .eq('id', book.id)
-        .eq('user_id', user.id);
+        .eq('id', book.id);
 
       if (error) throw error;
       
