@@ -3,16 +3,39 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogOut, User } from "lucide-react";
+import { useState } from "react";
+import { toast } from "@/components/ui/use-toast";
 
 const UserAuthButtons = () => {
   const { user, signOut } = useAuth();
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   if (!user) {
     return null;
   }
 
-  const handleSignOut = async () => {
-    await signOut();
+  const handleSignOut = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (isSigningOut) return;
+    
+    try {
+      setIsSigningOut(true);
+      await signOut();
+      toast({
+        title: "Signed out successfully",
+        description: "You have been logged out of your account"
+      });
+    } catch (error) {
+      console.error("Error during sign out:", error);
+      toast({
+        title: "Sign out error",
+        description: "There was a problem signing you out. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSigningOut(false);
+    }
   };
 
   const getInitials = () => {
@@ -34,7 +57,13 @@ const UserAuthButtons = () => {
           {user.user_metadata?.username || user.email}
         </span>
       </div>
-      <Button variant="ghost" size="icon" onClick={handleSignOut} title="Sign out">
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        onClick={handleSignOut} 
+        title="Sign out"
+        disabled={isSigningOut}
+      >
         <LogOut className="h-5 w-5" />
       </Button>
     </div>
