@@ -4,22 +4,58 @@ import { Link } from "react-router-dom";
 import { Book } from "@/lib/types";
 import { Heart, Search } from "lucide-react";
 import StarRating from "@/components/StarRating";
-import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
-import { toggleFavorite } from "@/lib/redux/slices/favoritesSlice";
+import { supabase } from "@/integrations/supabase/client";
+import { mapDbBookToBook } from "@/services/bookService";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/components/ui/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const FavoritesTable = () => {
-  const dispatch = useAppDispatch();
-  const { favorites } = useAppSelector(state => state.favorites);
-  
+  const { user } = useAuth();
+  const [favorites, setFavorites] = useState<Book[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    if (user) {
+      fetchFavoriteBooks();
+    }
+  }, [user]);
   
   useEffect(() => {
     // Filter books when favorites, activeTab or searchQuery changes
     filterBooks(searchQuery, activeTab);
   }, [favorites, searchQuery, activeTab]);
+  
+  const fetchFavoriteBooks = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('books')
+        .select('*')
+        .eq('user_id', user?.id)
+        .eq('is_favorite', true)
+        .order('last_updated', { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      const mappedBooks = data.map(mapDbBookToBook);
+      setFavorites(mappedBooks);
+    } catch (error: any) {
+      console.error("Error fetching favorite books:", error.message);
+      toast({
+        title: "Error fetching favorites",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
@@ -30,12 +66,41 @@ const FavoritesTable = () => {
     setActiveTab(tab);
   };
   
-  const handleFavoriteToggle = (bookId: string) => {
-    dispatch(toggleFavorite(bookId));
-    toast({
-      title: "Favorites updated",
-      description: "Your favorites list has been updated.",
-    });
+  const handleFavoriteToggle = async (bookId: string) => {
+    try {
+      // Find the book and toggle its favorite status
+      const bookToUpdate = favorites.find(book => book.id === bookId);
+      if (!bookToUpdate) return;
+      
+      // Update the book's favorite status in Supabase
+      const { error } = await supabase
+        .from('books')
+        .update({ 
+          is_favorite: false,
+          last_updated: new Date().toISOString()
+        })
+        .eq('id', bookId)
+        .eq('user_id', user?.id);
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Update local state
+      setFavorites(prev => prev.filter(book => book.id !== bookId));
+      
+      toast({
+        title: "Removed from favorites",
+        description: "Book has been removed from your favorites.",
+      });
+    } catch (error: any) {
+      console.error("Error toggling favorite status:", error.message);
+      toast({
+        title: "Error updating favorites",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
   };
   
   const filterBooks = (query: string, tab: string) => {
@@ -62,8 +127,33 @@ const FavoritesTable = () => {
     setFilteredBooks(filtered);
   };
   
+  if (isLoading) {
+    return (
+      <section>
+        <div className="flex justify-between items-center mb-4">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-10 w-40" />
+        </div>
+        
+        <div className="border-b mb-6">
+          <div className="flex overflow-x-auto">
+            {[1, 2, 3, 4].map((_, i) => (
+              <Skeleton key={i} className="h-10 w-32 mx-1" />
+            ))}
+          </div>
+        </div>
+        
+        <div className="animate-pulse space-y-4">
+          {[1, 2, 3, 4].map((_, i) => (
+            <div key={i} className="h-16 bg-gray-100 rounded" />
+          ))}
+        </div>
+      </section>
+    );
+  }
+  
   return (
-    <section>
+    <section className="animate-fade-in">
       <div className="flex justify-between items-center mb-4">
         <h2 className="section-heading">All Favorites ({filteredBooks.length})</h2>
         

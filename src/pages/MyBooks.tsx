@@ -2,29 +2,54 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Book } from "@/lib/types";
-import { mockBooks } from "@/lib/mock-data";
 import BookshelfTabs from "@/components/BookshelfTabs";
 import BookListItem from "@/components/BookListItem";
 import { Search, BookOpen, BookMarked, ListTodo, CheckCircle2 } from "lucide-react";
-import { useAppSelector } from "@/lib/redux/hooks";
+import { supabase } from "@/integrations/supabase/client";
+import { mapDbBookToBook } from "@/services/bookService";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/components/ui/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const MyBooks = () => {
+  const { user } = useAuth();
   const [books, setBooks] = useState<Book[]>([]);
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("recently-added");
-  const { favorites } = useAppSelector(state => state.favorites);
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
-    // Get books and update their favorite status
-    const updatedBooks = mockBooks.map(book => ({
-      ...book,
-      isFavorite: favorites.some(fav => fav.id === book.id)
-    }));
-    
-    setBooks(updatedBooks);
-    setFilteredBooks(updatedBooks);
-  }, [favorites]);
+    if (user) {
+      fetchBooks();
+    }
+  }, [user]);
+  
+  const fetchBooks = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('books')
+        .select('*')
+        .eq('user_id', user?.id)
+        .order('last_updated', { ascending: false });
+
+      if (error) throw error;
+
+      const mappedBooks = data.map(mapDbBookToBook);
+      setBooks(mappedBooks);
+      setFilteredBooks(mappedBooks);
+    } catch (error: any) {
+      console.error("Error fetching books:", error.message);
+      toast({
+        title: "Error fetching books",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
@@ -73,6 +98,44 @@ const MyBooks = () => {
     setFilteredBooks(sorted);
   };
   
+  if (isLoading) {
+    return (
+      <div>
+        <div className="border-b">
+          <div className="max-w-7xl mx-auto px-6 py-6">
+            <Skeleton className="h-10 w-32 mb-4" />
+            <div className="h-12 mb-4">
+              <Skeleton className="h-full w-full" />
+            </div>
+          </div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
+            <Skeleton className="h-10 w-full sm:w-64" />
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-10 w-32" />
+              <Skeleton className="h-10 w-32" />
+            </div>
+          </div>
+          
+          <div className="mb-8 space-y-4">
+            {[1, 2, 3, 4].map((_, i) => (
+              <Skeleton key={i} className="h-16 w-full" />
+            ))}
+          </div>
+          
+          <Skeleton className="h-8 w-48 mb-4" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((_, i) => (
+              <Skeleton key={i} className="h-32 w-full" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div>
       <div className="border-b">
@@ -84,7 +147,7 @@ const MyBooks = () => {
       </div>
       
       <div className="max-w-7xl mx-auto px-6 py-6">
-        <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6 animate-fade-in">
           <div className="relative w-full sm:w-auto sm:flex-grow">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             <input 
@@ -123,23 +186,23 @@ const MyBooks = () => {
         
         <div className="mb-8">
           {filteredBooks.length === 0 ? (
-            <div className="text-center py-12 bg-gray-50 rounded-lg">
+            <div className="text-center py-12 bg-gray-50 rounded-lg animate-fade-in">
               <p className="text-lg text-muted-foreground mb-4">No books found.</p>
               <Link
-                to="/discover"
+                to="/add-book"
                 className="px-5 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
               >
-                Discover Books
+                Add Your First Book
               </Link>
             </div>
           ) : (
             filteredBooks.map((book) => (
-              <BookListItem key={book.id} book={book} />
+              <BookListItem key={book.id} book={book} onFavoriteToggle={fetchBooks} />
             ))
           )}
         </div>
         
-        <div>
+        <div className="animate-fade-in">
           <h2 className="text-xl font-bold mb-4">Book Statistics</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">

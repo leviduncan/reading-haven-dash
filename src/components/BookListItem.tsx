@@ -3,31 +3,65 @@ import { Book } from "@/lib/types";
 import { Link } from "react-router-dom";
 import { MoreVertical, Heart, BookOpen } from "lucide-react";
 import StarRating from "./StarRating";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { toggleFavorite } from "@/lib/redux/slices/favoritesSlice";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
+import { useState } from "react";
 
 interface BookListItemProps {
   book: Book;
+  onFavoriteToggle?: () => void;
 }
 
-const BookListItem = ({ book }: BookListItemProps) => {
-  const dispatch = useAppDispatch();
-  const { favorites } = useAppSelector(state => state.favorites);
-  const isFavorite = favorites.some(fav => fav.id === book.id);
+const BookListItem = ({ book, onFavoriteToggle }: BookListItemProps) => {
+  const { user } = useAuth();
+  const [isFavorite, setIsFavorite] = useState(book.isFavorite);
+  const [isUpdating, setIsUpdating] = useState(false);
   
-  const handleFavoriteToggle = () => {
-    dispatch(toggleFavorite(book.id));
-    toast({
-      title: isFavorite ? "Removed from favorites" : "Added to favorites",
-      description: isFavorite 
-        ? "The book has been removed from your favorites." 
-        : "The book has been added to your favorites.",
-    });
+  const handleFavoriteToggle = async () => {
+    if (!user || isUpdating) return;
+    
+    setIsUpdating(true);
+    try {
+      const newFavoriteStatus = !isFavorite;
+      
+      const { error } = await supabase
+        .from('books')
+        .update({ 
+          is_favorite: newFavoriteStatus,
+          last_updated: new Date().toISOString()
+        })
+        .eq('id', book.id)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+      
+      setIsFavorite(newFavoriteStatus);
+      
+      toast({
+        title: newFavoriteStatus ? "Added to favorites" : "Removed from favorites",
+        description: newFavoriteStatus 
+          ? "The book has been added to your favorites." 
+          : "The book has been removed from your favorites.",
+      });
+      
+      if (onFavoriteToggle) {
+        onFavoriteToggle();
+      }
+    } catch (error: any) {
+      console.error("Error toggling favorite status:", error.message);
+      toast({
+        title: "Error updating favorite status",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setIsUpdating(false);
+    }
   };
   
   return (
-    <div className="flex items-center py-3 border-b">
+    <div className="flex items-center py-3 border-b animate-fade-in">
       <div className="flex-shrink-0 w-6 mr-4">
         <BookOpen className="h-5 w-5 text-gray-500" />
       </div>
@@ -51,6 +85,7 @@ const BookListItem = ({ book }: BookListItemProps) => {
           onClick={handleFavoriteToggle}
           className="p-1 rounded-full hover:bg-gray-100"
           aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          disabled={isUpdating}
         >
           <Heart className={`h-5 w-5 ${isFavorite ? 'fill-book-favorite text-book-favorite' : 'text-gray-400'}`} />
         </button>
