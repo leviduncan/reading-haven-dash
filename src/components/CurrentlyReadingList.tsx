@@ -2,11 +2,12 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Book } from "@/lib/types";
-import { fetchBooksByStatus, toggleBookFavorite } from "@/services/bookService";
+import { fetchBooksByStatus, toggleBookFavorite, updateBook } from "@/services/bookService";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/components/ui/use-toast";
 import BookCard from "@/components/BookCard";
 import { Heart } from "lucide-react";
+import StarRating from "@/components/StarRating";
 
 interface CurrentlyReadingListProps {
   limit?: number;
@@ -62,6 +63,41 @@ const CurrentlyReadingList = ({ limit, showViewAll = true }: CurrentlyReadingLis
     }
   };
 
+  const handleRatingChange = async (bookId: string, rating: number) => {
+    if (!user) return;
+
+    try {
+      const bookToUpdate = books.find(book => book.id === bookId);
+      if (!bookToUpdate) return;
+
+      const updatedBook = await updateBook(
+        bookId, 
+        { ...bookToUpdate, rating }, 
+        user.id
+      );
+      
+      if (updatedBook) {
+        setBooks(prev => 
+          prev.map(book => 
+            book.id === bookId ? { ...book, rating } : book
+          )
+        );
+        
+        toast({
+          title: "Rating updated",
+          description: "Your rating has been saved."
+        });
+      }
+    } catch (error) {
+      console.error("Error updating rating:", error);
+      toast({
+        title: "Error updating rating",
+        description: "Failed to update your rating",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <>
       <div className="flex items-center justify-between mb-4">
@@ -101,6 +137,16 @@ const CurrentlyReadingList = ({ limit, showViewAll = true }: CurrentlyReadingLis
                     <Heart className={`h-4 w-4 ${book.isFavorite ? 'fill-book-favorite text-book-favorite' : ''}`} />
                     {book.isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
                   </button>
+                </div>
+              }
+              extraContent={
+                <div className="mt-3">
+                  <div className="text-sm font-medium mb-1">Your Rating</div>
+                  <StarRating
+                    value={book.rating || 0}
+                    onChange={(rating) => handleRatingChange(book.id, rating)}
+                    size="sm"
+                  />
                 </div>
               }
             />

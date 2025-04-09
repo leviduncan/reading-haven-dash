@@ -43,6 +43,11 @@ type SortColumn = 'title' | 'author' | 'genre';
 type SortDirection = 'asc' | 'desc';
 
 const ITEMS_PER_PAGE = 10;
+const GENRES = [
+  "fiction", "fantasy", "science_fiction", "mystery", 
+  "thriller", "romance", "historical_fiction", "biography", 
+  "non-fiction", "poetry", "horror", "adventure"
+];
 
 const Discover = () => {
   const [books, setBooks] = useState<Book[]>([]); // Existing books in user library
@@ -67,7 +72,7 @@ const Discover = () => {
   
   useEffect(() => {
     fetchUserBooks();
-    fetchPopularBooks();
+    fetchMixedGenreBooks();
   }, []);
 
   useEffect(() => {
@@ -90,14 +95,29 @@ const Discover = () => {
     }
   };
   
-  const fetchPopularBooks = async () => {
+  const fetchMixedGenreBooks = async () => {
     setIsLoading(true);
     try {
-      // Fetch popular books from Open Library
-      const response = await fetch('https://openlibrary.org/search.json?q=subject:fiction&sort=rating&limit=40');
-      const data: OpenLibraryResponse = await response.json();
+      // Select a random genre to feature
+      const randomGenres = GENRES.sort(() => 0.5 - Math.random()).slice(0, 3);
       
-      setOpenLibraryBooks(data.docs.filter(book => book.title && book.author_name));
+      // Fetch books from multiple genres
+      const promises = randomGenres.map(genre => 
+        fetch(`https://openlibrary.org/search.json?subject=${genre}&limit=15`)
+          .then(res => res.json())
+      );
+      
+      const results = await Promise.all(promises);
+      
+      // Combine and shuffle books from different genres
+      const allBooks = results.flatMap((data: OpenLibraryResponse) => 
+        data.docs.filter(book => book.title && book.author_name)
+      );
+      
+      // Shuffle the books for variety
+      const shuffledBooks = allBooks.sort(() => 0.5 - Math.random());
+      
+      setOpenLibraryBooks(shuffledBooks);
       applyFiltersAndPagination();
     } catch (error: any) {
       console.error("Error fetching books from Open Library:", error.message);
@@ -334,7 +354,7 @@ const Discover = () => {
       
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h2 className="text-xl font-semibold">
-          {searchQuery ? `Search results for "${searchQuery}"` : "Popular Books"}
+          {searchQuery ? `Search results for "${searchQuery}"` : "Discover Books"}
         </h2>
         
         <div className="flex items-center gap-3">

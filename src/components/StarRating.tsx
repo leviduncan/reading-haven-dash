@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { Star } from "lucide-react";
 
 interface StarRatingProps {
   value: number;
@@ -44,23 +45,19 @@ const StarRating = ({
   
   return (
     <div 
-      className="star-rating" 
+      className="star-rating flex" 
       onMouseLeave={handleMouseLeave}
     >
       {Array.from({ length: count }).map((_, index) => {
         const filled = (hoverValue !== null ? index < hoverValue : index < value);
         
         return (
-          <svg 
+          <Star
             key={index}
-            className={`${sizeClass} ${filled ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'} ${!disabled && 'cursor-pointer'} transition-colors`}
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
+            className={`${sizeClass} ${filled ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'} ${!disabled && 'cursor-pointer'} transition-colors mr-0.5`}
             onClick={() => handleClick(index)}
             onMouseOver={() => handleMouseOver(index)}
-          >
-            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-          </svg>
+          />
         );
       })}
     </div>

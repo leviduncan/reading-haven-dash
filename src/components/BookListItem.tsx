@@ -11,11 +11,13 @@ import { useState } from "react";
 interface BookListItemProps {
   book: Book;
   onFavoriteToggle?: () => void;
+  onRatingChange?: () => void;
 }
 
-const BookListItem = ({ book, onFavoriteToggle }: BookListItemProps) => {
+const BookListItem = ({ book, onFavoriteToggle, onRatingChange }: BookListItemProps) => {
   const { user } = useAuth();
   const [isFavorite, setIsFavorite] = useState(book.isFavorite);
+  const [rating, setRating] = useState(book.rating || 0);
   const [isUpdating, setIsUpdating] = useState(false);
   
   const handleFavoriteToggle = async (e: React.MouseEvent) => {
@@ -61,6 +63,43 @@ const BookListItem = ({ book, onFavoriteToggle }: BookListItemProps) => {
       setIsUpdating(false);
     }
   };
+
+  const handleRatingChange = async (newRating: number) => {
+    if (!user || isUpdating) return;
+    
+    setIsUpdating(true);
+    try {
+      const { error } = await supabase
+        .from('books')
+        .update({ 
+          rating: newRating,
+          last_updated: new Date().toISOString()
+        })
+        .eq('id', book.id);
+
+      if (error) throw error;
+      
+      setRating(newRating);
+      
+      toast({
+        title: "Rating updated",
+        description: "Your rating has been saved."
+      });
+      
+      if (onRatingChange) {
+        onRatingChange();
+      }
+    } catch (error: any) {
+      console.error("Error updating rating:", error.message);
+      toast({
+        title: "Error updating rating",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
   
   return (
     <div className="flex items-center py-3 border-b animate-fade-in">
@@ -79,7 +118,12 @@ const BookListItem = ({ book, onFavoriteToggle }: BookListItemProps) => {
       <div className="w-28 text-sm text-gray-600">{book.genre}</div>
       
       <div className="w-24">
-        <StarRating value={book.rating || 0} size="sm" disabled />
+        <StarRating 
+          value={rating} 
+          size="sm" 
+          onChange={handleRatingChange}
+          disabled={isUpdating}
+        />
       </div>
       
       <div className="flex items-center gap-2">

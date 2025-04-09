@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Book } from "@/lib/types";
@@ -91,6 +92,41 @@ const FavoritesTable = () => {
       console.error("Error toggling favorite status:", error.message);
       toast({
         title: "Error updating favorites",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  };
+  
+  const handleRatingChange = async (bookId: string, rating: number) => {
+    try {
+      const { error } = await supabase
+        .from('books')
+        .update({ 
+          rating: rating,
+          last_updated: new Date().toISOString()
+        })
+        .eq('id', bookId);
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Update local state
+      setFavorites(prev => 
+        prev.map(book => 
+          book.id === bookId ? { ...book, rating } : book
+        )
+      );
+      
+      toast({
+        title: "Rating updated",
+        description: "Your rating has been saved.",
+      });
+    } catch (error: any) {
+      console.error("Error updating rating:", error.message);
+      toast({
+        title: "Error updating rating",
         description: error.message,
         variant: "destructive"
       });
@@ -256,7 +292,11 @@ const FavoritesTable = () => {
                     {book.genre.split(',')[0]}
                   </td>
                   <td className="py-3 px-4">
-                    <StarRating value={book.rating || 0} size="sm" disabled />
+                    <StarRating 
+                      value={book.rating || 0} 
+                      size="sm" 
+                      onChange={(rating) => handleRatingChange(book.id, rating)}
+                    />
                   </td>
                   <td className="py-3 px-4 text-right">
                     <button className="text-sm text-gray-400 hover:text-gray-600">•••</button>

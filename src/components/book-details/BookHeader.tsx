@@ -16,6 +16,7 @@ const BookHeader = ({ book }: BookHeaderProps) => {
   const { user } = useAuth();
   const [isFavorite, setIsFavorite] = useState(book.isFavorite);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [rating, setRating] = useState(book.rating || 0);
   
   const handleToggleFavorite = async () => {
     if (!user || isUpdating) return;
@@ -48,6 +49,41 @@ const BookHeader = ({ book }: BookHeaderProps) => {
       console.error("Error toggling favorite status:", error.message);
       toast({
         title: "Error updating favorite status",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+  
+  const handleRatingChange = async (newRating: number) => {
+    if (!user) return;
+    
+    setIsUpdating(true);
+    try {
+      // Update the book in Supabase
+      const { error } = await supabase
+        .from('books')
+        .update({ 
+          rating: newRating,
+          last_updated: new Date().toISOString()
+        })
+        .eq('id', book.id);
+
+      if (error) throw error;
+      
+      // Update local state
+      setRating(newRating);
+      
+      toast({
+        title: "Rating updated",
+        description: "Your rating has been saved."
+      });
+    } catch (error: any) {
+      console.error("Error updating rating:", error.message);
+      toast({
+        title: "Error updating rating",
         description: error.message,
         variant: "destructive"
       });
@@ -93,7 +129,12 @@ const BookHeader = ({ book }: BookHeaderProps) => {
             <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg">
               <Star className="h-5 w-5 mb-2 text-gray-500" />
               <div className="text-sm font-medium">Your Rating</div>
-              <StarRating value={book.rating || 0} size="sm" disabled />
+              <StarRating 
+                value={rating} 
+                size="sm"
+                onChange={handleRatingChange}
+                disabled={isUpdating}
+              />
             </div>
           </div>
           
