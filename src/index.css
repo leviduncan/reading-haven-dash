@@ -94,6 +94,27 @@
   }
 }
 
+body {
+  font-family: 'Sarabun', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #211e1c;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Taviraj', 'Georgia', serif;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.1;
+  color: #211e1c;
+}
+
+.hero h1 {
+  font-size: 3.5rem;
+  font-weight: 300;
+  color: #fff;
+}
+
 /* Custom classes for the Book Tracker app */
 @layer components {
   .sidebar-item {
@@ -130,7 +151,7 @@
 }
 
 .hero {
-  background: linear-gradient(#20293780, #20293780), 
+  background: linear-gradient(#383432c5, #012241c2), 
               url('../hero04.webp') no-repeat center center/cover;
 }
 

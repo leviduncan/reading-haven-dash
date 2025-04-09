@@ -12,6 +12,7 @@ import { toast } from "@/components/ui/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import CurrentlyReadingList from "@/components/CurrentlyReadingList";
+import Hero from "@/components/Hero";
 
 const Dashboard = () => {
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
@@ -46,6 +47,8 @@ const Dashboard = () => {
   }, []);
   
   return (
+    <>
+    <Hero />
     <div className="p-6 max-w-7xl mx-auto">
       <header className="mb-8">
         <h2 className="text-3xl font-bold">Reading Dashboard</h2>
@@ -159,6 +162,7 @@ const Dashboard = () => {
         </DialogContent>
       </Dialog>
     </div>
+    </>
   );
 };
 
