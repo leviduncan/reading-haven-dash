@@ -107,7 +107,7 @@ const Completed = () => {
             <span className="text-foreground">Completed</span>
           </div>
           
-          <h1 className="text-3xl font-bold mb-4">Completed Books</h1>
+          <h1 className="text-3xl mb-4">Completed Books</h1>
           
           <BookshelfTabs />
         </div>
@@ -118,7 +118,7 @@ const Completed = () => {
         <section className="mb-10">
           <h2 className="section-heading mb-4">Reading Stats</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">
+            <div className="bg-white  shadow-sm p-6 flex items-center gap-4">
               <div className="bg-blue-100 p-3 rounded-full">
                 <BookOpen className="h-6 w-6 text-blue-600" />
               </div>
@@ -129,7 +129,7 @@ const Completed = () => {
               </div>
             </div>
             
-            <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">
+            <div className="bg-white  shadow-sm p-6 flex items-center gap-4">
               <div className="bg-green-100 p-3 rounded-full">
                 <FileText className="h-6 w-6 text-green-600" />
               </div>
@@ -140,7 +140,7 @@ const Completed = () => {
               </div>
             </div>
             
-            <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">
+            <div className="bg-white  shadow-sm p-6 flex items-center gap-4">
               <div className="bg-purple-100 p-3 rounded-full">
                 <Star className="h-6 w-6 text-purple-600" />
               </div>
@@ -151,7 +151,7 @@ const Completed = () => {
               </div>
             </div>
             
-            <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">
+            <div className="bg-white  shadow-sm p-6 flex items-center gap-4">
               <div className="bg-yellow-100 p-3 rounded-full">
                 <LibraryBig className="h-6 w-6 text-yellow-600" />
               </div>
@@ -170,7 +170,7 @@ const Completed = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {recentlyCompleted.map(book => (
-              <div key={book.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div key={book.id} className="bg-white  shadow-sm overflow-hidden">
                 <div className="p-4">
                   <div className="text-sm text-muted-foreground">{book.author}</div>
                   <h3 className="font-bold mb-2">{book.title}</h3>
@@ -181,14 +181,14 @@ const Completed = () => {
                   <div className="flex justify-between mt-4">
                     <Link
                       to={`/add-review/${book.id}`}
-                      className="px-4 py-2 bg-primary text-white rounded-md text-sm hover:bg-primary/90 transition-colors"
+                      className="px-4 py-2 bg-primary text-white text-sm hover:bg-primary/90 transition-colors"
                     >
                       Add Review
                     </Link>
                     
                     <Link
                       to={`/book/${book.id}`}
-                      className="px-4 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50 transition-colors"
+                      className="px-4 py-2 border border-gray-300 text-sm hover:bg-gray-50 transition-colors"
                     >
                       View Details
                     </Link>
@@ -205,7 +205,7 @@ const Completed = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {books.filter(book => book.rating !== undefined).slice(0, 2).map(book => (
-              <div key={book.id} className="bg-white rounded-lg shadow-sm p-6">
+              <div key={book.id} className="bg-white  shadow-sm p-6">
                 <div className="flex items-start gap-4">
                   <img 
                     src={book.coverImage} 
@@ -254,7 +254,7 @@ const Completed = () => {
                 placeholder="Search completed books"
                 value={searchQuery}
                 onChange={handleSearch}
-                className="border border-gray-300 rounded-lg py-1 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="border border-gray-300  py-1 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
           </div>
@@ -352,7 +352,7 @@ const Completed = () => {
           
           {filteredBooks.length > 5 && (
             <div className="mt-6 text-center">
-              <button className="px-6 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50 transition-colors">
+              <button className="px-6 py-2 border border-gray-300 text-sm hover:bg-gray-50 transition-colors">
                 Load More
               </button>
             </div>

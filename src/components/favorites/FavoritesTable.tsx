@@ -194,7 +194,7 @@ const FavoritesTable = () => {
             placeholder="Search favorites"
             value={searchQuery}
             onChange={handleSearch}
-            className="border border-gray-300 rounded-lg py-1 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            className="border border-gray-300  py-1 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
       </div>
@@ -252,11 +252,11 @@ const FavoritesTable = () => {
       </div>
       
       {filteredBooks.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
+        <div className="text-center py-12 bg-gray-50 ">
           <p className="text-lg text-muted-foreground mb-4">No favorite books found.</p>
           <Link
             to="/discover"
-            className="px-5 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+            className="px-5 py-2 bg-primary text-white  hover:bg-primary/90 transition-colors"
           >
             Discover Books
           </Link>
@@ -310,7 +310,7 @@ const FavoritesTable = () => {
       
       {filteredBooks.length > 5 && (
         <div className="mt-6 text-center">
-          <button className="px-6 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50 transition-colors">
+          <button className="px-6 py-2 border border-gray-300 text-sm hover:bg-gray-50 transition-colors">
             Load More
           </button>
         </div>

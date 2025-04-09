@@ -77,7 +77,7 @@ const BookDetailsTab = ({ book }: BookDetailsTabProps) => {
       
       <h2 className="text-xl font-bold mb-4">Reading Stats</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="flex flex-col items-center p-6 bg-white border rounded-lg">
+        <div className="flex flex-col items-center p-6 bg-white border ">
           <BookCopy className="h-6 w-6 mb-3 text-gray-500" />
           <div className="text-2xl font-bold">{book.pageCount}</div>
           <div className="text-sm text-muted-foreground">Pages</div>
@@ -86,7 +86,7 @@ const BookDetailsTab = ({ book }: BookDetailsTabProps) => {
         
         {book.status === 'currently-reading' && book.progress && (
           <>
-            <div className="flex flex-col items-center p-6 bg-white border rounded-lg">
+            <div className="flex flex-col items-center p-6 bg-white border ">
               <Clock className="h-6 w-6 mb-3 text-gray-500" />
               <div className="text-2xl font-bold">{daysReading || 'N/A'}</div>
               <div className="text-sm text-muted-foreground">Reading Time</div>
@@ -97,7 +97,7 @@ const BookDetailsTab = ({ book }: BookDetailsTabProps) => {
               </div>
             </div>
             
-            <div className="flex flex-col items-center p-6 bg-white border rounded-lg">
+            <div className="flex flex-col items-center p-6 bg-white border ">
               <BarChart2 className="h-6 w-6 mb-3 text-gray-500" />
               <div className="text-2xl font-bold">{pagesPerDay || 'N/A'}</div>
               <div className="text-sm text-muted-foreground">Pages/Day</div>

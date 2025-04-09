@@ -76,7 +76,7 @@ const WantToRead = () => {
             <span className="text-foreground">Want to Read</span>
           </div>
           
-          <h1 className="text-3xl font-bold mb-4">Want to Read</h1>
+          <h1 className="text-3xl mb-4">Want to Read</h1>
           
           <BookshelfTabs />
         </div>
@@ -89,7 +89,7 @@ const WantToRead = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {recentlyAdded.map(book => (
-              <div key={book.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div key={book.id} className="bg-white  shadow-sm overflow-hidden">
                 <div className="flex p-4 gap-4">
                   <div className="flex-shrink-0">
                     <img 
@@ -135,7 +135,7 @@ const WantToRead = () => {
             {categories.map(category => (
               <div 
                 key={category.name}
-                className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow cursor-pointer"
+                className="bg-white  shadow-sm p-6 hover:shadow-md transition-shadow cursor-pointer"
               >
                 <div className="flex justify-between items-center">
                   <div>
@@ -161,17 +161,17 @@ const WantToRead = () => {
                 placeholder="Search your list"
                 value={searchQuery}
                 onChange={handleSearch}
-                className="border border-gray-300 rounded-lg py-1 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="border border-gray-300  py-1 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
           </div>
           
           {filteredBooks.length === 0 ? (
-            <div className="text-center py-12 bg-gray-50 rounded-lg">
+            <div className="text-center py-12 bg-gray-50 ">
               <p className="text-lg text-muted-foreground mb-4">No books found in your Want to Read list.</p>
               <Link
                 to="/discover"
-                className="px-5 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+                className="px-5 py-2 bg-primary text-white  hover:bg-primary/90 transition-colors"
               >
                 Discover Books
               </Link>
@@ -238,7 +238,7 @@ const WantToRead = () => {
                         <td className="py-3 px-4 text-muted-foreground">{addedText}</td>
                         <td className="py-3 px-4 text-right">
                           <button 
-                            className="px-4 py-1 bg-primary text-white rounded-md text-sm hover:bg-primary/90 transition-colors"
+                            className="px-4 py-1 bg-primary text-white text-sm hover:bg-primary/90 transition-colors"
                             onClick={() => handleStartReading(book.id)}
                           >
                             Start Reading
@@ -254,7 +254,7 @@ const WantToRead = () => {
           
           {filteredBooks.length > 5 && (
             <div className="mt-6 text-center">
-              <button className="px-6 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50 transition-colors">
+              <button className="px-6 py-2 border border-gray-300 text-sm hover:bg-gray-50 transition-colors">
                 Load More
               </button>
             </div>

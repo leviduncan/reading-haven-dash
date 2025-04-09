@@ -121,7 +121,7 @@ const BookActionButtons = ({
       {book.status === 'want-to-read' && (
         <button
           onClick={handleStartReading}
-          className={`${isCompact ? 'mb-2' : 'flex-1'} text-center px-4 py-2 rounded-md bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors`}
+          className={`${isCompact ? 'mb-2' : 'flex-1'} text-center px-4 py-2 bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors`}
           disabled={isProcessing}
         >
           Start Reading
@@ -131,7 +131,7 @@ const BookActionButtons = ({
       {book.status === 'currently-reading' && (
         <button
           onClick={handleContinueReading}
-          className={`${isCompact ? 'mb-2' : 'flex-1'} text-center px-4 py-2 rounded-md bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors`}
+          className={`${isCompact ? 'mb-2' : 'flex-1'} text-center px-4 py-2 bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors`}
           disabled={isProcessing}
         >
           Continue Reading
@@ -141,7 +141,7 @@ const BookActionButtons = ({
       {book.status === 'completed' && (
         <Link
           to={`/add-review/${book.id}`}
-          className={`${isCompact ? 'mb-2' : 'flex-1'} text-center px-4 py-2 rounded-md border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors`}
+          className={`${isCompact ? 'mb-2' : 'flex-1'} text-center px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors`}
         >
           Add Review
         </Link>
@@ -150,7 +150,7 @@ const BookActionButtons = ({
       {!book.status && (
         <button
           onClick={handleAddToList}
-          className={`${isCompact ? 'mb-2' : 'flex-1'} flex items-center justify-center gap-1 px-4 py-2 rounded-md bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors`}
+          className={`${isCompact ? 'mb-2' : 'flex-1'} flex items-center justify-center gap-1 px-4 py-2 bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors`}
           disabled={isProcessing}
         >
           <Plus className="h-4 w-4" />
@@ -160,7 +160,7 @@ const BookActionButtons = ({
       
       <Link
         to={`/book/${book.id}`}
-        className={`${isCompact ? '' : 'flex-1'} text-center px-4 py-2 rounded-md border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors`}
+        className={`${isCompact ? '' : 'flex-1'} text-center px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors`}
       >
         Preview
       </Link>

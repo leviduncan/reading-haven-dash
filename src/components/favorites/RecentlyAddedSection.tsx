@@ -64,11 +64,11 @@ const RecentlyAddedSection = () => {
             <RecentlyAddedCard key={book.id} book={book} />
           ))
         ) : (
-          <div className="col-span-3 text-center py-8 bg-gray-50 rounded-lg">
+          <div className="col-span-3 text-center py-8 bg-gray-50 ">
             <p className="text-muted-foreground mb-4">No recently added favorites yet.</p>
             <Link
               to="/discover"
-              className="px-5 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+              className="px-5 py-2 bg-primary text-white  hover:bg-primary/90 transition-colors"
             >
               Discover Books
             </Link>

@@ -46,7 +46,7 @@ const CurrentlyReading = () => {
             <span className="text-foreground">Currently Reading</span>
           </div>
           
-          <h1 className="text-3xl font-bold mb-4">Currently Reading</h1>
+          <h1 className="text-3xl mb-4">Currently Reading</h1>
           
           <BookshelfTabs />
         </div>
@@ -62,7 +62,7 @@ const CurrentlyReading = () => {
         <section className="mb-10">
           <h2 className="section-heading mb-4">Reading Statistics</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">
+            <div className="bg-white  shadow-sm p-6 flex items-center gap-4">
               <div className="bg-blue-100 p-3 rounded-full">
                 <BookOpen className="h-6 w-6 text-blue-600" />
               </div>
@@ -72,7 +72,7 @@ const CurrentlyReading = () => {
               </div>
             </div>
             
-            <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">
+            <div className="bg-white  shadow-sm p-6 flex items-center gap-4">
               <div className="bg-green-100 p-3 rounded-full">
                 <BarChart2 className="h-6 w-6 text-green-600" />
               </div>
@@ -82,7 +82,7 @@ const CurrentlyReading = () => {
               </div>
             </div>
             
-            <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">
+            <div className="bg-white  shadow-sm p-6 flex items-center gap-4">
               <div className="bg-purple-100 p-3 rounded-full">
                 <Calendar className="h-6 w-6 text-purple-600" />
               </div>
@@ -92,7 +92,7 @@ const CurrentlyReading = () => {
               </div>
             </div>
             
-            <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">
+            <div className="bg-white  shadow-sm p-6 flex items-center gap-4">
               <div className="bg-yellow-100 p-3 rounded-full">
                 <Clock className="h-6 w-6 text-yellow-600" />
               </div>

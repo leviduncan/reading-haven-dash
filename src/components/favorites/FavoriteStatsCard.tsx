@@ -40,7 +40,7 @@ const FavoriteStatsCard = ({ icon, value, label, sublabel }: StatsCardProps) => 
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">
+    <div className="bg-white  shadow-sm p-6 flex items-center gap-4">
       <div className={`${getBgColor()} p-3 rounded-full`}>
         {getIconComponent()}
       </div>

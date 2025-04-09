@@ -212,7 +212,7 @@ const MyBooks = () => {
     <div>
       <div className="border-b">
         <div className="max-w-7xl mx-auto px-6 py-6">
-          <h1 className="text-3xl font-bold mb-4">My Books</h1>
+          <h1 className="text-3xl mb-4">My Books</h1>
           
           <BookshelfTabs />
         </div>
@@ -227,7 +227,7 @@ const MyBooks = () => {
               placeholder="Search your books"
               value={searchQuery}
               onChange={handleSearch}
-              className="w-full border border-gray-300 rounded-lg py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full border border-gray-300  py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           
@@ -248,7 +248,7 @@ const MyBooks = () => {
               id="sort-by"
               value={sortBy}
               onChange={(e) => handleSortChange(e.target.value)}
-              className="border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary bg-white"
+              className="border border-gray-300  py-2 px-4 focus:outline-none focus:ring-2 focus:ring-primary bg-white"
             >
               <option value="recently-added">Recently Added</option>
               <option value="title">Title</option>
@@ -259,7 +259,7 @@ const MyBooks = () => {
         </div>
         
         {isFilterOpen && (
-          <div className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg animate-fade-in">
+          <div className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4 bg-gray-50 p-4  animate-fade-in">
             <div>
               <label className="text-sm text-muted-foreground mb-1 block">Title</label>
               <Input
@@ -289,7 +289,7 @@ const MyBooks = () => {
         
         <div className="mb-8">
           {filteredBooks.length === 0 ? (
-            <div className="text-center py-12 bg-gray-50 rounded-lg animate-fade-in">
+            <div className="text-center py-12 bg-gray-50  animate-fade-in">
               <p className="text-lg text-muted-foreground mb-4">No books found.</p>
             </div>
           ) : (
@@ -349,9 +349,9 @@ const MyBooks = () => {
         </div>
         
         <div className="animate-fade-in">
-          <h2 className="text-xl font-bold mb-4">Book Statistics</h2>
+          <h2 className="text-xl mb-4">Book Statistics</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">
+            <div className="bg-white  shadow-sm p-6 flex items-center gap-4">
               <div className="bg-blue-100 p-3 rounded-full">
                 <BookOpen className="h-6 w-6 text-blue-600" />
               </div>
@@ -361,7 +361,7 @@ const MyBooks = () => {
               </div>
             </div>
             
-            <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">
+            <div className="bg-white  shadow-sm p-6 flex items-center gap-4">
               <div className="bg-green-100 p-3 rounded-full">
                 <BookMarked className="h-6 w-6 text-green-600" />
               </div>
@@ -371,7 +371,7 @@ const MyBooks = () => {
               </div>
             </div>
             
-            <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">
+            <div className="bg-white  shadow-sm p-6 flex items-center gap-4">
               <div className="bg-purple-100 p-3 rounded-full">
                 <CheckCircle2 className="h-6 w-6 text-purple-600" />
               </div>
@@ -381,7 +381,7 @@ const MyBooks = () => {
               </div>
             </div>
             
-            <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">
+            <div className="bg-white  shadow-sm p-6 flex items-center gap-4">
               <div className="bg-yellow-100 p-3 rounded-full">
                 <ListTodo className="h-6 w-6 text-yellow-600" />
               </div>

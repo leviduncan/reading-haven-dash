@@ -8,7 +8,7 @@ interface RecentlyAddedCardProps {
 
 const RecentlyAddedCard = ({ book }: RecentlyAddedCardProps) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+    <div className="bg-white  shadow-sm overflow-hidden">
       <div className="flex p-4 gap-4">
         <div className="flex-shrink-0">
           <img 

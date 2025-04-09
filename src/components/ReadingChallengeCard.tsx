@@ -15,7 +15,7 @@ const ReadingChallengeCard = ({
   onViewDetails 
 }: ReadingChallengeCardProps) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-white  shadow-sm p-6">
       <div className="flex items-center gap-3 mb-4">
         <div className="bg-yellow-100 p-2 rounded-full">
           <Trophy className="h-6 w-6 text-yellow-600" />
@@ -35,14 +35,14 @@ const ReadingChallengeCard = ({
       <div className="flex gap-3">
         <button
           onClick={onUpdate}
-          className="px-4 py-2 rounded-md bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors"
+          className="px-4 py-2 bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors"
         >
           Update Goal
         </button>
         
         <button
           onClick={onViewDetails}
-          className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors"
+          className="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors"
         >
           View Details
         </button>

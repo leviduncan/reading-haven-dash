@@ -172,7 +172,7 @@ const ReadingStats = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <header className="mb-8 flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Reading Stats</h1>
+        <h1 className="text-3xl">Reading Stats</h1>
         
         <div className="flex items-center gap-4">
           <Select 
@@ -204,7 +204,7 @@ const ReadingStats = () => {
           <section className="mb-10">
             <h2 className="section-heading mb-4">{selectedYear === currentYear ? "This Year" : selectedYear}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">
+              <div className="bg-white  shadow-sm p-6 flex items-center gap-4">
                 <div className="bg-blue-100 p-3 rounded-full">
                   <Book className="h-6 w-6 text-blue-600" />
                 </div>
@@ -214,7 +214,7 @@ const ReadingStats = () => {
                 </div>
               </div>
               
-              <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">
+              <div className="bg-white  shadow-sm p-6 flex items-center gap-4">
                 <div className="bg-green-100 p-3 rounded-full">
                   <BookOpen className="h-6 w-6 text-green-600" />
                 </div>
@@ -224,7 +224,7 @@ const ReadingStats = () => {
                 </div>
               </div>
               
-              <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">
+              <div className="bg-white  shadow-sm p-6 flex items-center gap-4">
                 <div className="bg-purple-100 p-3 rounded-full">
                   <Clock className="h-6 w-6 text-purple-600" />
                 </div>
@@ -234,7 +234,7 @@ const ReadingStats = () => {
                 </div>
               </div>
               
-              <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">
+              <div className="bg-white  shadow-sm p-6 flex items-center gap-4">
                 <div className="bg-yellow-100 p-3 rounded-full">
                   <Calendar className="h-6 w-6 text-yellow-600" />
                 </div>
@@ -244,7 +244,7 @@ const ReadingStats = () => {
                 </div>
               </div>
               
-              <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">
+              <div className="bg-white  shadow-sm p-6 flex items-center gap-4">
                 <div className="bg-red-100 p-3 rounded-full">
                   <BarChart2 className="h-6 w-6 text-red-600" />
                 </div>
@@ -254,7 +254,7 @@ const ReadingStats = () => {
                 </div>
               </div>
               
-              <div className="bg-white rounded-lg shadow-sm p-6 flex items-center gap-4">
+              <div className="bg-white  shadow-sm p-6 flex items-center gap-4">
                 <div className="bg-indigo-100 p-3 rounded-full">
                   <Star className="h-6 w-6 text-indigo-600" />
                 </div>
@@ -268,7 +268,7 @@ const ReadingStats = () => {
           
           {/* Reading Challenge */}
           <section className="mb-10">
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-white  shadow-sm p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="bg-yellow-100 p-3 rounded-full">
                   <Trophy className="h-6 w-6 text-yellow-600" />
@@ -329,7 +329,7 @@ const ReadingStats = () => {
           {/* Monthly Reading */}
           <section className="mb-10">
             <h2 className="section-heading mb-4">Monthly Reading Activity</h2>
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-white  shadow-sm p-6">
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart
                   data={monthlyStats}
@@ -356,7 +356,7 @@ const ReadingStats = () => {
           {/* Reading History */}
           <section>
             <h2 className="section-heading mb-4">Reading History</h2>
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div className="bg-white  shadow-sm overflow-hidden">
               <div className="p-6 border-b">
                 <h3 className="font-medium mb-2">Monthly Summary</h3>
                 <table className="w-full">
@@ -382,7 +382,7 @@ const ReadingStats = () => {
               </div>
               
               <div className="p-6">
-                <button className="px-6 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50 transition-colors">
+                <button className="px-6 py-2 border border-gray-300 text-sm hover:bg-gray-50 transition-colors">
                   View Full History
                 </button>
               </div>

@@ -71,7 +71,7 @@ const BookCard = ({ book, showProgress = false, actionButtons, extraContent }: B
           ) : (
             <Link 
               to={`/book/${book.id}`}
-              className="w-full text-center px-4 py-2 rounded-md bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
+              className="w-full text-center px-4 py-2 bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
             >
               View Details
             </Link>

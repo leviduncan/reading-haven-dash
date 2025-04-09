@@ -64,7 +64,7 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				book: {
-					progress: '#3498db',
+					progress: '#211e1c', /*#3498db*/
 					completed: '#2ecc71',
 					favorite: '#e74c3c'
 				}

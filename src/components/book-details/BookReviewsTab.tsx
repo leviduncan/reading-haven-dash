@@ -16,7 +16,7 @@ const BookReviewsTab = ({ bookId, reviews }: BookReviewsTabProps) => {
         <h2 className="text-xl font-bold">Your Review</h2>
         <Link
           to={`/add-review/${bookId}`}
-          className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+          className="px-4 py-2 bg-primary text-white hover:bg-primary/90 transition-colors"
         >
           Write a Review
         </Link>
@@ -24,7 +24,7 @@ const BookReviewsTab = ({ bookId, reviews }: BookReviewsTabProps) => {
       
       {reviews.length > 0 ? (
         reviews.map(review => (
-          <div key={review.id} className="bg-white border rounded-lg p-6 mb-6">
+          <div key={review.id} className="bg-white border  p-6 mb-6">
             <div className="flex justify-between items-start">
               <div className="flex items-start gap-3">
                 <div className="bg-gray-100 rounded-full p-2">
@@ -52,11 +52,11 @@ const BookReviewsTab = ({ bookId, reviews }: BookReviewsTabProps) => {
           </div>
         ))
       ) : (
-        <div className="bg-gray-50 border rounded-lg p-6 text-center">
+        <div className="bg-gray-50 border  p-6 text-center">
           <p className="text-muted-foreground">You haven't reviewed this book yet.</p>
           <Link
             to={`/add-review/${bookId}`}
-            className="mt-4 inline-block px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+            className="mt-4 inline-block px-4 py-2 bg-primary text-white hover:bg-primary/90 transition-colors"
           >
             Add Review
           </Link>

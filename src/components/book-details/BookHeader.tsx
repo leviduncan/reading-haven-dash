@@ -99,7 +99,7 @@ const BookHeader = ({ book }: BookHeaderProps) => {
           <img 
             src={book.coverImage} 
             alt={book.title}
-            className="w-full aspect-[2/3] object-cover rounded-lg shadow-lg"
+            className="w-full aspect-[2/3] object-cover  shadow-lg"
           />
         </div>
         
@@ -108,25 +108,25 @@ const BookHeader = ({ book }: BookHeaderProps) => {
           <div className="text-xl mb-4">{book.author}</div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg">
+            <div className="flex flex-col items-center p-4 bg-gray-50 ">
               <User className="h-5 w-5 mb-2 text-gray-500" />
               <div className="text-sm font-medium">Author</div>
               <div className="text-sm">{book.author}</div>
             </div>
             
-            <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg">
+            <div className="flex flex-col items-center p-4 bg-gray-50 ">
               <BookOpen className="h-5 w-5 mb-2 text-gray-500" />
               <div className="text-sm font-medium">Genre</div>
               <div className="text-sm">{book.genre}</div>
             </div>
             
-            <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg">
+            <div className="flex flex-col items-center p-4 bg-gray-50 ">
               <Calendar className="h-5 w-5 mb-2 text-gray-500" />
               <div className="text-sm font-medium">Date Completed</div>
               <div className="text-sm">{book.finishedReading || 'In Progress'}</div>
             </div>
             
-            <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg">
+            <div className="flex flex-col items-center p-4 bg-gray-50 ">
               <Star className="h-5 w-5 mb-2 text-gray-500" />
               <div className="text-sm font-medium">Your Rating</div>
               <StarRating 
@@ -140,17 +140,17 @@ const BookHeader = ({ book }: BookHeaderProps) => {
           
           <div className="mt-auto flex gap-3">
             {book.status === 'currently-reading' ? (
-              <button className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">
+              <button className="px-6 py-2 bg-primary text-white hover:bg-primary/90 transition-colors">
                 Continue Reading
               </button>
             ) : book.status === 'want-to-read' ? (
-              <button className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">
+              <button className="px-6 py-2 bg-primary text-white hover:bg-primary/90 transition-colors">
                 Start Reading
               </button>
             ) : (
               <Link 
                 to={`/add-review/${book.id}`}
-                className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+                className="px-6 py-2 bg-primary text-white hover:bg-primary/90 transition-colors"
               >
                 Add Review
               </Link>
@@ -158,14 +158,14 @@ const BookHeader = ({ book }: BookHeaderProps) => {
             
             <button 
               onClick={handleToggleFavorite}
-              className="px-6 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors flex items-center gap-2"
+              className="px-6 py-2 border border-gray-300 hover:bg-gray-50 transition-colors flex items-center gap-2"
               disabled={isUpdating}
             >
               <Heart className={`h-5 w-5 ${isFavorite ? 'fill-book-favorite text-book-favorite' : ''}`} />
               <span>{isFavorite ? 'Favorited' : 'Add to Favorites'}</span>
             </button>
             
-            <button className="px-6 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+            <button className="px-6 py-2 border border-gray-300 hover:bg-gray-50 transition-colors">
               Share
             </button>
           </div>

@@ -16,7 +16,7 @@ const Favorites = () => {
             <span className="text-foreground">Favorites</span>
           </div>
           
-          <h1 className="text-3xl font-bold mb-4">Favorite Books</h1>
+          <h1 className="text-3xl mb-4">Favorite Books</h1>
           
           <BookshelfTabs />
         </div>

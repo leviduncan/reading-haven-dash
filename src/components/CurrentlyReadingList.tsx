@@ -112,7 +112,7 @@ const CurrentlyReadingList = ({ limit, showViewAll = true }: CurrentlyReadingLis
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-72 bg-gray-100 animate-pulse rounded-lg"></div>
+            <div key={i} className="h-72 bg-gray-100 animate-pulse "></div>
           ))}
         </div>
       ) : books.length > 0 ? (
@@ -126,13 +126,13 @@ const CurrentlyReadingList = ({ limit, showViewAll = true }: CurrentlyReadingLis
                 <div className="w-full flex flex-col gap-2">
                   <Link
                     to={`/book/${book.id}`}
-                    className="w-full text-center px-4 py-2 rounded-md bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
+                    className="w-full text-center px-4 py-2 bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
                   >
                     Continue Reading
                   </Link>
                   <button
                     onClick={() => handleToggleFavorite(book.id, book.isFavorite)}
-                    className="w-full text-center px-4 py-2 rounded-md border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+                    className="w-full text-center px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
                   >
                     <Heart className={`h-4 w-4 ${book.isFavorite ? 'fill-book-favorite text-book-favorite' : ''}`} />
                     {book.isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
@@ -153,11 +153,11 @@ const CurrentlyReadingList = ({ limit, showViewAll = true }: CurrentlyReadingLis
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
+        <div className="text-center py-12 bg-gray-50 ">
           <p className="text-lg text-muted-foreground mb-4">You're not currently reading any books.</p>
           <Link
             to="/discover"
-            className="px-5 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+            className="px-5 py-2 bg-primary text-white  hover:bg-primary/90 transition-colors"
           >
             Find Books to Read
           </Link>

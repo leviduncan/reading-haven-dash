@@ -77,7 +77,7 @@ const AddBook = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-8">Add New Book</h1>
+      <h1 className="text-3xl mb-8">Add New Book</h1>
       
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -150,7 +150,7 @@ const AddBook = () => {
               </p>
               
               {formData.coverImage && (
-                <div className="mt-3 relative w-full max-w-[150px] h-48 border rounded-md overflow-hidden">
+                <div className="mt-3 relative w-full max-w-[150px] h-48 border overflow-hidden">
                   <img 
                     src={formData.coverImage}
                     alt="Book cover preview" 

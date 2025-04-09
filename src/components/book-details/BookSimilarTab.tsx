@@ -27,13 +27,13 @@ const BookSimilarTab = ({ similarBooks }: BookSimilarTabProps) => {
               <p className="text-sm text-muted-foreground mb-2">{book.author} • {book.genre.split(',')[0]}</p>
               
               <div className="mt-4 flex flex-col gap-2">
-                <button className="w-full px-4 py-2 rounded-md bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors">
+                <button className="w-full px-4 py-2 bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors">
                   Add to List
                 </button>
                 
                 <Link
                   to={`/book/${book.id}`}
-                  className="w-full text-center px-4 py-2 rounded-md border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors"
+                  className="w-full text-center px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors"
                 >
                   Preview
                 </Link>

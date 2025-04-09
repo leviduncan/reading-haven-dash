@@ -51,11 +51,11 @@ const Dashboard = () => {
     <Hero />
     <div className="p-6 max-w-7xl mx-auto">
       <header className="mb-8">
-        <h2 className="text-3xl font-bold">Reading Dashboard</h2>
+        <h2 className="text-3xl">Reading Dashboard</h2>
       </header>
       
       {/* Currently Reading Section */}
-      <section className="mb-8">
+      <section className="mb-8 p-6 bg-white shadow-sm">
         <CurrentlyReadingList limit={3} showViewAll={true} />
       </section>
       
@@ -98,16 +98,16 @@ const Dashboard = () => {
           </Link>
         </div>
         
-        <div className="relative bg-gray-100 rounded-lg p-6 flex items-center mb-4">
+        <div className="relative bg-neutral-400  p-6 flex items-center mb-4">
           <div className="relative flex-grow">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             <input 
               type="text" 
               placeholder="Title, author, or ISBN"
-              className="w-full border border-gray-300 rounded-lg py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full border border-gray-300  py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
-          <Link to="/discover" className="ml-4 px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
+          <Link to="/discover" className="ml-4 px-6 py-2 bg-gray-900 text-white  hover:bg-gray-800 transition-colors">
             Search
           </Link>
         </div>
@@ -116,7 +116,7 @@ const Dashboard = () => {
       {/* Recent Activity */}
       <section>
         <h2 className="section-heading mb-4">Recent Activity</h2>
-        <div className="bg-white rounded-lg shadow-sm p-4">
+        <div className="bg-white  shadow-sm p-4">
           {recentActivity.length > 0 ? (
             recentActivity.map((activity) => (
               <ActivityItem 

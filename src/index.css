@@ -29,7 +29,7 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
+    --border: 10 10% 80.5%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
 
@@ -109,16 +109,23 @@ h1, h2, h3, h4, h5, h6 {
   color: #211e1c;
 }
 
+/* border-color:#e5e7eb */
+
 .auth h1, .hero h1 {
   font-size: 3.5rem;
   font-weight: 300;
   color: #fff;
 }
 
+h2 {
+  padding-top: 3rem;
+  font-size: 3.5rem;
+}
+
 /* Custom classes for the Book Tracker app */
 @layer components {
   .sidebar-item {
-    @apply flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors hover:bg-sidebar-accent;
+    @apply flex items-center gap-2 px-4 py-2 text-sm font-medium  transition-colors hover:bg-sidebar-accent;
   }
   
   .sidebar-item.active {
@@ -138,7 +145,7 @@ h1, h2, h3, h4, h5, h6 {
   }
   
   .book-card {
-    @apply bg-white rounded-lg shadow-md overflow-hidden transition-all hover:shadow-lg;
+    @apply bg-white  shadow-md overflow-hidden transition-all hover:shadow-lg;
   }
   
   .section-heading {
@@ -146,12 +153,12 @@ h1, h2, h3, h4, h5, h6 {
   }
   
   .stat-card {
-    @apply bg-white rounded-lg shadow-sm p-4;
+    @apply bg-white  shadow-sm p-4;
   }
 }
 
 .hero {
-  background: linear-gradient(#383432c5, #012241c2), 
+  background: linear-gradient(#211e1cc0, #211e1cc0), 
               url('../hero04.webp') no-repeat center center/cover;
 }
 

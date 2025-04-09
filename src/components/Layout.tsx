@@ -105,7 +105,7 @@ const Layout = () => {
         </nav>
 
         {/* User Section - Updated to use UserAuthButtons which contains the user info */}
-        <div className="p-4 border-t">
+        <div className="p-4 border-t bg-neutral-400">
           <UserAuthButtons />
         </div>
       </aside>

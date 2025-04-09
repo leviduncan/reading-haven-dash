@@ -334,7 +334,7 @@ const Discover = () => {
   
   return (
     <div className="max-w-7xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-8">Discover Books</h1>
+      <h1 className="text-3xl mb-8">Discover Books</h1>
       
       <div className="mb-8">
         <form onSubmit={handleSearch} className="flex gap-4 w-full max-w-xl">
@@ -378,7 +378,7 @@ const Discover = () => {
       </div>
       
       {isFilterOpen && (
-        <div className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg">
+        <div className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4 bg-gray-50 p-4 ">
           <div>
             <label className="text-sm text-muted-foreground mb-1 block">Title</label>
             <Input
@@ -409,11 +409,11 @@ const Discover = () => {
       {isLoading ? (
         <div className="grid grid-cols-1 gap-4">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-16 bg-gray-100 animate-pulse rounded-lg"></div>
+            <div key={i} className="h-16 bg-gray-100 animate-pulse "></div>
           ))}
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-white  shadow overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>

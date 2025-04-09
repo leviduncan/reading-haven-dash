@@ -69,7 +69,7 @@ const AddReview = () => {
       {/* Content */}
       <div className="max-w-7xl mx-auto p-6">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-6">Add Review for {book.title}</h1>
+          <h1 className="text-2xl mb-6">Add Review for {book.title}</h1>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-2">
@@ -99,7 +99,7 @@ const AddReview = () => {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="e.g., Thought-provoking and inspiring"
-                    className="w-full border border-gray-300 rounded-md p-3"
+                    className="w-full border border-gray-300 p-3"
                   />
                 </div>
                 
@@ -116,7 +116,7 @@ const AddReview = () => {
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     placeholder="Share what you liked, what you didn't, and who you'd recommend this book to..."
-                    className="w-full border border-gray-300 rounded-md p-3 min-h-[200px]"
+                    className="w-full border border-gray-300 p-3 min-h-[200px]"
                   />
                 </div>
                 
@@ -133,7 +133,7 @@ const AddReview = () => {
                         type="date"
                         value={startDate}
                         onChange={(e) => setStartDate(e.target.value)}
-                        className="w-full border border-gray-300 rounded-md p-3"
+                        className="w-full border border-gray-300 p-3"
                       />
                     </div>
                     
@@ -146,7 +146,7 @@ const AddReview = () => {
                         type="date"
                         value={endDate}
                         onChange={(e) => setEndDate(e.target.value)}
-                        className="w-full border border-gray-300 rounded-md p-3"
+                        className="w-full border border-gray-300 p-3"
                       />
                     </div>
                   </div>
@@ -154,7 +154,7 @@ const AddReview = () => {
                 
                 {/* Options */}
                 <div className="mb-8">
-                  <div className="flex items-center justify-between p-4 border rounded-md mb-4">
+                  <div className="flex items-center justify-between p-4 border mb-4">
                     <div className="flex items-center gap-3">
                       <Heart className={`h-5 w-5 ${isFavorite ? 'fill-book-favorite text-book-favorite' : 'text-gray-500'}`} />
                       <div>
@@ -199,14 +199,14 @@ const AddReview = () => {
                 <div className="flex justify-between">
                   <button
                     type="submit"
-                    className="px-6 py-3 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors"
+                    className="px-6 py-3 bg-gray-900 text-white hover:bg-gray-800 transition-colors"
                   >
                     Submit Review
                   </button>
                   
                   <Link
                     to={`/book/${book.id}`}
-                    className="px-6 py-3 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                    className="px-6 py-3 border border-gray-300 hover:bg-gray-50 transition-colors"
                   >
                     Cancel
                   </Link>
@@ -216,7 +216,7 @@ const AddReview = () => {
             
             {/* Book Info */}
             <div>
-              <div className="bg-gray-50 rounded-lg p-6">
+              <div className="bg-gray-50  p-6">
                 <div className="flex justify-end">
                   <button className="text-gray-500 hover:text-gray-700">
                     <X className="h-5 w-5" />
@@ -232,7 +232,7 @@ const AddReview = () => {
                   <img
                     src={book.coverImage}
                     alt={book.title}
-                    className="w-32 rounded-md shadow-md"
+                    className="w-32 shadow-md"
                   />
                 </div>
                 
