@@ -5,12 +5,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { Book } from "@/lib/types";
 import { mapDbBookToBook } from "@/services/bookService";
 import { toast } from "@/components/ui/use-toast";
-import BookCard from "@/components/BookCard";
-import BookActionButtons from "@/components/BookActionButtons";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Loader2 } from "lucide-react";
+import { BookOpen, Loader2, Filter } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious 
+} from "@/components/ui/pagination";
 
 interface OpenLibraryBook {
   key: string;
@@ -26,20 +33,41 @@ interface OpenLibraryResponse {
   docs: OpenLibraryBook[];
 }
 
+interface FilterOptions {
+  title: string;
+  author: string;
+  genre: string;
+}
+
+const ITEMS_PER_PAGE = 10;
+
 const Discover = () => {
   const [books, setBooks] = useState<Book[]>([]); // Existing books in user library
   const [openLibraryBooks, setOpenLibraryBooks] = useState<OpenLibraryBook[]>([]);
+  const [filteredBooks, setFilteredBooks] = useState<OpenLibraryBook[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBooks, setSelectedBooks] = useState<Record<string, boolean>>({});
   const [isAdding, setIsAdding] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [filters, setFilters] = useState<FilterOptions>({
+    title: "",
+    author: "",
+    genre: ""
+  });
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const { user } = useAuth();
   
   useEffect(() => {
     fetchUserBooks();
     fetchPopularBooks();
   }, []);
+
+  useEffect(() => {
+    applyFiltersAndPagination();
+  }, [openLibraryBooks, filters, currentPage]);
 
   const fetchUserBooks = async () => {
     try {
@@ -65,6 +93,7 @@ const Discover = () => {
       const data: OpenLibraryResponse = await response.json();
       
       setOpenLibraryBooks(data.docs.filter(book => book.title && book.author_name));
+      applyFiltersAndPagination();
     } catch (error: any) {
       console.error("Error fetching books from Open Library:", error.message);
       toast({
@@ -87,6 +116,8 @@ const Discover = () => {
       const data: OpenLibraryResponse = await response.json();
       
       setOpenLibraryBooks(data.docs.filter(book => book.title && book.author_name));
+      setCurrentPage(1);
+      applyFiltersAndPagination();
     } catch (error: any) {
       console.error("Error searching books:", error.message);
       toast({
@@ -99,11 +130,66 @@ const Discover = () => {
     }
   };
 
+  const applyFiltersAndPagination = () => {
+    // Apply filters
+    let result = [...openLibraryBooks];
+    
+    if (filters.title) {
+      result = result.filter(book => 
+        book.title.toLowerCase().includes(filters.title.toLowerCase())
+      );
+    }
+    
+    if (filters.author) {
+      result = result.filter(book => 
+        book.author_name?.some(author => 
+          author.toLowerCase().includes(filters.author.toLowerCase())
+        )
+      );
+    }
+    
+    if (filters.genre) {
+      result = result.filter(book => 
+        book.subject?.some(subject => 
+          subject.toLowerCase().includes(filters.genre.toLowerCase())
+        )
+      );
+    }
+    
+    // Calculate pagination
+    const total = Math.ceil(result.length / ITEMS_PER_PAGE);
+    setTotalPages(total || 1);
+    
+    // Ensure current page is valid
+    if (currentPage > total && total > 0) {
+      setCurrentPage(1);
+    }
+    
+    // Apply pagination
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    const paginatedBooks = result.slice(start, start + ITEMS_PER_PAGE);
+    
+    setFilteredBooks(paginatedBooks);
+  };
+
+  const handleFilterChange = (key: keyof FilterOptions, value: string) => {
+    setFilters(prev => ({
+      ...prev,
+      [key]: value
+    }));
+    setCurrentPage(1);
+  };
+
   const toggleBookSelection = (key: string) => {
     setSelectedBooks(prev => ({
       ...prev,
       [key]: !prev[key]
     }));
+  };
+
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
   };
 
   const handleAddSelectedBooks = async () => {
@@ -183,12 +269,12 @@ const Discover = () => {
       
       <div className="mb-8">
         <form onSubmit={handleSearch} className="flex gap-4 w-full max-w-xl">
-          <input 
+          <Input 
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search for books..."
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="flex-1"
           />
           <Button type="submit" disabled={isSearching}>
             {isSearching ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
@@ -197,18 +283,59 @@ const Discover = () => {
         </form>
       </div>
       
-      <div className="mb-6 flex justify-between items-center">
+      <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h2 className="text-xl font-semibold">
           {searchQuery ? `Search results for "${searchQuery}"` : "Popular Books"}
         </h2>
-        <Button 
-          onClick={handleAddSelectedBooks} 
-          disabled={Object.values(selectedBooks).filter(Boolean).length === 0 || isAdding}
-        >
-          {isAdding ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-          Add Selected Books
-        </Button>
+        
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="outline" 
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            className="gap-2"
+          >
+            <Filter className="h-4 w-4" />
+            Filters
+          </Button>
+          
+          <Button 
+            onClick={handleAddSelectedBooks} 
+            disabled={Object.values(selectedBooks).filter(Boolean).length === 0 || isAdding}
+          >
+            {isAdding ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+            Add Selected Books
+          </Button>
+        </div>
       </div>
+      
+      {isFilterOpen && (
+        <div className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg">
+          <div>
+            <label className="text-sm text-muted-foreground mb-1 block">Title</label>
+            <Input
+              placeholder="Filter by title"
+              value={filters.title}
+              onChange={(e) => handleFilterChange('title', e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="text-sm text-muted-foreground mb-1 block">Author</label>
+            <Input
+              placeholder="Filter by author"
+              value={filters.author}
+              onChange={(e) => handleFilterChange('author', e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="text-sm text-muted-foreground mb-1 block">Genre</label>
+            <Input
+              placeholder="Filter by genre"
+              value={filters.genre}
+              onChange={(e) => handleFilterChange('genre', e.target.value)}
+            />
+          </div>
+        </div>
+      )}
       
       {isLoading ? (
         <div className="grid grid-cols-1 gap-4">
@@ -225,13 +352,12 @@ const Discover = () => {
                 <TableHead className="w-16"></TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead>Author</TableHead>
-                <TableHead>Pages</TableHead>
                 <TableHead>Genre</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {openLibraryBooks.length > 0 ? (
-                openLibraryBooks.map((book) => {
+              {filteredBooks.length > 0 ? (
+                filteredBooks.map((book) => {
                   const isInLibrary = books.some(
                     userBook => userBook.title.toLowerCase() === book.title.toLowerCase() && 
                                userBook.author.toLowerCase() === (book.author_name?.[0] || "Unknown").toLowerCase()
@@ -265,20 +391,66 @@ const Discover = () => {
                         {isInLibrary && <span className="ml-2 text-xs text-muted-foreground">(Already in library)</span>}
                       </TableCell>
                       <TableCell>{book.author_name?.[0] || "Unknown"}</TableCell>
-                      <TableCell>{book.number_of_pages_median || "Unknown"}</TableCell>
                       <TableCell>{book.subject?.[0] || "Fiction"}</TableCell>
                     </TableRow>
                   );
                 })
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                    No books found. Try a different search term.
+                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                    No books found. Try a different search term or filter.
                   </TableCell>
                 </TableRow>
               )}
             </TableBody>
           </Table>
+          
+          <div className="py-4 border-t">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+                
+                {[...Array(totalPages)].map((_, i) => {
+                  const page = i + 1;
+                  // Show limited page numbers for better UX
+                  if (
+                    page === 1 || 
+                    page === totalPages || 
+                    (page >= currentPage - 1 && page <= currentPage + 1)
+                  ) {
+                    return (
+                      <PaginationItem key={page}>
+                        <PaginationLink 
+                          isActive={page === currentPage}
+                          onClick={() => handlePageChange(page)}
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  }
+                  
+                  if (page === currentPage - 2 || page === currentPage + 2) {
+                    return <PaginationItem key={page}>...</PaginationItem>;
+                  }
+                  
+                  return null;
+                })}
+                
+                <PaginationItem>
+                  <PaginationNext 
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
         </div>
       )}
     </div>
