@@ -1,15 +1,15 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Book, ReadingChallenge } from "@/lib/types";
-import { mockBooks, mockReadingChallenge } from "@/lib/mock-data";
+import { ReadingChallenge } from "@/lib/types";
+import { mockReadingChallenge } from "@/lib/mock-data";
 import BookshelfTabs from "@/components/BookshelfTabs";
 import ReadingChallengeCard from "@/components/ReadingChallengeCard";
 import { BookOpen, BarChart2, Clock, Calendar } from "lucide-react";
 import { toast } from "sonner";
+import CurrentlyReadingList from "@/components/CurrentlyReadingList";
 
 const CurrentlyReading = () => {
-  const [books, setBooks] = useState<Book[]>([]);
   const [readingStats, setReadingStats] = useState({
     booksInProgress: 0,
     pagesThisWeek: 0,
@@ -20,13 +20,9 @@ const CurrentlyReading = () => {
   const [recentlyUpdated, setRecentlyUpdated] = useState<any[]>([]);
   
   useEffect(() => {
-    // Filter books that are currently being read
-    const currentBooks = mockBooks.filter(book => book.status === 'currently-reading');
-    setBooks(currentBooks);
-    
     // Set reading stats
     setReadingStats({
-      booksInProgress: currentBooks.length,
+      booksInProgress: 0, // Will be updated based on books
       pagesThisWeek: 187,
       readingStreak: 12,
       avgDailyReading: 42
@@ -34,18 +30,6 @@ const CurrentlyReading = () => {
     
     // Set reading challenge
     setChallenge(mockReadingChallenge);
-    
-    // Set recently updated books
-    setRecentlyUpdated(
-      currentBooks.map(book => ({
-        id: book.id,
-        title: book.title,
-        lastUpdated: book.lastUpdated || book.dateAdded,
-        currentPage: book.progress?.currentPage || 0,
-        totalPages: book.pageCount,
-        progress: book.progress?.percentage || 0
-      }))
-    );
   }, []);
   
   const handleUpdateGoal = () => {
@@ -71,76 +55,7 @@ const CurrentlyReading = () => {
       <div className="max-w-7xl mx-auto px-6 py-6">
         {/* In Progress Section */}
         <section className="mb-10">
-          <h2 className="section-heading mb-6">In Progress</h2>
-          
-          {books.length === 0 ? (
-            <div className="text-center py-12 bg-gray-50 rounded-lg">
-              <p className="text-lg text-muted-foreground mb-4">You are not currently reading any books.</p>
-              <div className="flex justify-center gap-4">
-                <Link
-                  to="/discover"
-                  className="px-5 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
-                >
-                  Discover Books
-                </Link>
-                <Link
-                  to="/want-to-read"
-                  className="px-5 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  View Want to Read List
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {books.map(book => (
-                <div key={book.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
-                  <div className="flex p-4 items-center gap-4">
-                    <div className="flex-shrink-0">
-                      <img 
-                        src={book.coverImage} 
-                        alt={book.title}
-                        className="w-16 h-24 object-cover rounded"
-                      />
-                    </div>
-                    
-                    <div className="flex-grow">
-                      <div className="text-sm text-muted-foreground">{book.author}</div>
-                      <h3 className="font-bold mb-2">{book.title}</h3>
-                      
-                      {book.progress && (
-                        <div className="mb-1 text-sm">
-                          Currently on page {book.progress.currentPage} of {book.pageCount} ({book.progress.percentage}%)
-                        </div>
-                      )}
-                      
-                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden mb-3">
-                        <div 
-                          className="h-full bg-book-progress rounded-full"
-                          style={{ width: `${book.progress?.percentage || 0}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="border-t grid grid-cols-2">
-                    <Link
-                      to={`/book/${book.id}`}
-                      className="py-3 text-center font-medium text-primary border-r hover:bg-gray-50 transition-colors"
-                    >
-                      Continue Reading
-                    </Link>
-                    <Link
-                      to={`/book/${book.id}`}
-                      className="py-3 text-center font-medium text-gray-600 hover:bg-gray-50 transition-colors"
-                    >
-                      View Details
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          <CurrentlyReadingList showViewAll={false} />
         </section>
         
         {/* Reading Statistics */}

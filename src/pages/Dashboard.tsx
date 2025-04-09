@@ -1,22 +1,19 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Book, ReadingStats } from "@/lib/types";
+import { ReadingStats } from "@/lib/types";
 import { getRecentActivity } from "@/lib/mock-data";
-import BookCard from "@/components/BookCard";
 import StatCard from "@/components/StatCard";
 import ActivityItem from "@/components/ActivityItem";
-import { BookOpen, Clock, BarChart2, Star, Search, Heart } from "lucide-react";
+import { BookOpen, Clock, BarChart2, Star, Search } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { fetchBooksByStatus, toggleBookFavorite } from "@/services/bookService";
 import { fetchReadingStats } from "@/services/readingService";
 import { toast } from "@/components/ui/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import CurrentlyReadingList from "@/components/CurrentlyReadingList";
 
 const Dashboard = () => {
-  const [currentlyReading, setCurrentlyReading] = useState<Book[]>([]);
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [readingStats, setReadingStats] = useState<ReadingStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -27,19 +24,12 @@ const Dashboard = () => {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        const books = await fetchBooksByStatus('currently-reading');
-        setCurrentlyReading(books.slice(0, 3));
-        
         const stats = await fetchReadingStats();
         if (stats) {
           setReadingStats(stats);
         }
         
         setRecentActivity(getRecentActivity());
-        
-        if (books.length === 0) {
-          setShowAddFirstBook(true);
-        }
       } catch (error) {
         console.error("Error loading dashboard data:", error);
         toast({
@@ -54,65 +44,6 @@ const Dashboard = () => {
     
     loadData();
   }, []);
-
-  const handleToggleFavorite = async (bookId: string, currentStatus: boolean) => {
-    if (!user) return;
-    
-    const newStatus = !currentStatus;
-    
-    const updatedBook = await toggleBookFavorite(bookId, newStatus);
-    
-    if (updatedBook) {
-      setCurrentlyReading(prev => 
-        prev.map(book => 
-          book.id === bookId ? { ...book, isFavorite: newStatus } : book
-        )
-      );
-      
-      toast({
-        title: newStatus ? "Added to favorites" : "Removed from favorites",
-        description: newStatus 
-          ? "The book has been added to your favorites." 
-          : "The book has been removed from your favorites."
-      });
-    }
-  };
-
-  const handleAddToList = async (bookId: string) => {
-    if (!user) return;
-    
-    try {
-      // Refetch the currently reading books after status change
-      const books = await fetchBooksByStatus('currently-reading');
-      setCurrentlyReading(books.slice(0, 3));
-      
-      // Refresh reading stats
-      const stats = await fetchReadingStats();
-      if (stats) {
-        setReadingStats(stats);
-      }
-    } catch (error) {
-      console.error("Error refreshing data after adding to list:", error);
-    }
-  };
-  
-  const handleStartReading = async (bookId: string) => {
-    if (!user) return;
-    
-    try {
-      // Refetch the currently reading books after status change
-      const books = await fetchBooksByStatus('currently-reading');
-      setCurrentlyReading(books.slice(0, 3));
-      
-      // Refresh reading stats
-      const stats = await fetchReadingStats();
-      if (stats) {
-        setReadingStats(stats);
-      }
-    } catch (error) {
-      console.error("Error refreshing data after starting reading:", error);
-    }
-  };
   
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -122,57 +53,7 @@ const Dashboard = () => {
       
       {/* Currently Reading Section */}
       <section className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="section-heading">Currently Reading</h2>
-          <Link to="/currently-reading" className="text-sm text-primary hover:underline">
-            View All
-          </Link>
-        </div>
-        
-        {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="h-72 bg-gray-100 animate-pulse rounded-lg"></div>
-            ))}
-          </div>
-        ) : currentlyReading.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentlyReading.map(book => (
-              <BookCard 
-                key={book.id} 
-                book={book}
-                showProgress={true}
-                actionButtons={
-                  <div className="w-full flex flex-col gap-2">
-                    <Link
-                      to={`/book/${book.id}`}
-                      className="w-full text-center px-4 py-2 rounded-md bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
-                    >
-                      Continue Reading
-                    </Link>
-                    <button
-                      onClick={() => handleToggleFavorite(book.id, book.isFavorite)}
-                      className="w-full text-center px-4 py-2 rounded-md border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
-                    >
-                      <Heart className={`h-4 w-4 ${book.isFavorite ? 'fill-book-favorite text-book-favorite' : ''}`} />
-                      {book.isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
-                    </button>
-                  </div>
-                }
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12 bg-gray-50 rounded-lg">
-            <p className="text-lg text-muted-foreground mb-4">You're not currently reading any books.</p>
-            <Link
-              to="/discover"
-              className="px-5 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
-            >
-              Find Books to Read
-            </Link>
-          </div>
-        )}
+        <CurrentlyReadingList limit={3} showViewAll={true} />
       </section>
       
       {/* Reading Stats Section */}

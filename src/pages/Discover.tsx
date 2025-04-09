@@ -7,7 +7,7 @@ import { mapDbBookToBook } from "@/services/bookService";
 import { toast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Loader2, Filter } from "lucide-react";
+import { BookOpen, Loader2, Filter, ChevronDown, ChevronUp } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { 
@@ -39,6 +39,9 @@ interface FilterOptions {
   genre: string;
 }
 
+type SortColumn = 'title' | 'author' | 'genre';
+type SortDirection = 'asc' | 'desc';
+
 const ITEMS_PER_PAGE = 10;
 
 const Discover = () => {
@@ -58,6 +61,8 @@ const Discover = () => {
     genre: ""
   });
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [sortColumn, setSortColumn] = useState<SortColumn>('title');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const { user } = useAuth();
   
   useEffect(() => {
@@ -67,7 +72,7 @@ const Discover = () => {
 
   useEffect(() => {
     applyFiltersAndPagination();
-  }, [openLibraryBooks, filters, currentPage]);
+  }, [openLibraryBooks, filters, currentPage, sortColumn, sortDirection]);
 
   const fetchUserBooks = async () => {
     try {
@@ -130,6 +135,17 @@ const Discover = () => {
     }
   };
 
+  const handleSortChange = (column: SortColumn) => {
+    if (sortColumn === column) {
+      // Toggle direction if same column
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // New column, default to ascending
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
   const applyFiltersAndPagination = () => {
     // Apply filters
     let result = [...openLibraryBooks];
@@ -155,6 +171,30 @@ const Discover = () => {
         )
       );
     }
+    
+    // Apply sorting
+    result = [...result].sort((a, b) => {
+      if (sortColumn === 'title') {
+        return sortDirection === 'asc' 
+          ? a.title.localeCompare(b.title)
+          : b.title.localeCompare(a.title);
+      } 
+      else if (sortColumn === 'author') {
+        const authorA = a.author_name?.[0] || 'Unknown';
+        const authorB = b.author_name?.[0] || 'Unknown';
+        return sortDirection === 'asc'
+          ? authorA.localeCompare(authorB)
+          : authorB.localeCompare(authorA);
+      }
+      else if (sortColumn === 'genre') {
+        const genreA = a.subject?.[0] || 'Fiction';
+        const genreB = b.subject?.[0] || 'Fiction';
+        return sortDirection === 'asc'
+          ? genreA.localeCompare(genreB)
+          : genreB.localeCompare(genreA);
+      }
+      return 0;
+    });
     
     // Calculate pagination
     const total = Math.ceil(result.length / ITEMS_PER_PAGE);
@@ -262,6 +302,15 @@ const Discover = () => {
       setIsAdding(false);
     }
   };
+
+  const renderSortIcon = (column: SortColumn) => {
+    if (sortColumn !== column) {
+      return <ChevronDown className="ml-1 h-4 w-4 text-gray-400" />;
+    }
+    return sortDirection === 'asc' 
+      ? <ChevronUp className="ml-1 h-4 w-4" />
+      : <ChevronDown className="ml-1 h-4 w-4" />;
+  };
   
   return (
     <div className="max-w-7xl mx-auto p-6">
@@ -350,9 +399,24 @@ const Discover = () => {
               <TableRow>
                 <TableHead className="w-12"></TableHead>
                 <TableHead className="w-16"></TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Author</TableHead>
-                <TableHead>Genre</TableHead>
+                <TableHead onClick={() => handleSortChange('title')} className="cursor-pointer hover:bg-gray-50">
+                  <div className="flex items-center">
+                    Title
+                    {renderSortIcon('title')}
+                  </div>
+                </TableHead>
+                <TableHead onClick={() => handleSortChange('author')} className="cursor-pointer hover:bg-gray-50">
+                  <div className="flex items-center">
+                    Author
+                    {renderSortIcon('author')}
+                  </div>
+                </TableHead>
+                <TableHead onClick={() => handleSortChange('genre')} className="cursor-pointer hover:bg-gray-50">
+                  <div className="flex items-center">
+                    Genre
+                    {renderSortIcon('genre')}
+                  </div>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
