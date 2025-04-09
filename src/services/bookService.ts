@@ -1,10 +1,8 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Book } from "@/lib/types";
 import { DbBook, BookStatus } from "@/types/supabase";
 import { toast } from "@/components/ui/use-toast";
 
-// Convert database book to application book
 export const mapDbBookToBook = (dbBook: DbBook): Book => {
   return {
     id: dbBook.id,
@@ -28,7 +26,6 @@ export const mapDbBookToBook = (dbBook: DbBook): Book => {
   };
 };
 
-// Convert application book to database book
 export const mapBookToDbBook = (book: Partial<Book>, userId: string): Partial<DbBook> => {
   const status = book.status as BookStatus;
   
@@ -143,7 +140,6 @@ export const createBook = async (book: Partial<Book>, userId: string): Promise<B
   try {
     const dbBook = mapBookToDbBook(book, userId);
     
-    // Validate required fields
     if (!dbBook.title || !dbBook.author || !dbBook.cover_image || !dbBook.description || 
         !dbBook.genre || !dbBook.page_count || !dbBook.status) {
       toast({
@@ -154,7 +150,6 @@ export const createBook = async (book: Partial<Book>, userId: string): Promise<B
       return null;
     }
     
-    // Cast to the expected type for insert operation
     const insertData = {
       user_id: userId,
       title: dbBook.title,
@@ -254,13 +249,33 @@ export const updateBookProgress = async (
   try {
     const percentage = Math.min(Math.round((currentPage / totalPages) * 100 * 100) / 100, 100);
     
+    const { data: currentBook } = await supabase
+      .from('books')
+      .select('status, current_page, page_count')
+      .eq('id', id)
+      .single();
+    
+    const wasCompleted = currentBook?.current_page === currentBook?.page_count;
+    const isNowCompleted = currentPage === totalPages;
+    
+    const updates: any = {
+      current_page: currentPage,
+      progress_percentage: percentage,
+      last_updated: new Date().toISOString()
+    };
+    
+    if (!wasCompleted && isNowCompleted) {
+      updates.status = 'completed';
+      updates.finished_reading = new Date().toISOString();
+    }
+    
+    if (currentBook?.current_page === 0 && currentPage > 0) {
+      updates.started_reading = new Date().toISOString();
+    }
+    
     const { data, error } = await supabase
       .from('books')
-      .update({
-        current_page: currentPage,
-        progress_percentage: percentage,
-        last_updated: new Date().toISOString()
-      })
+      .update(updates)
       .eq('id', id)
       .select()
       .single();
@@ -273,6 +288,27 @@ export const updateBookProgress = async (
         variant: "destructive"
       });
       return null;
+    }
+    
+    if (!wasCompleted && isNowCompleted) {
+      try {
+        const { data: statsData } = await supabase
+          .from('reading_stats')
+          .select('*')
+          .single();
+        
+        if (statsData) {
+          await supabase
+            .from('reading_stats')
+            .update({
+              books_read: (statsData.books_read || 0) + 1,
+              total_pages: (statsData.total_pages || 0) + totalPages,
+              last_updated: new Date().toISOString()
+            });
+        }
+      } catch (statsError) {
+        console.error("Error updating reading stats:", statsError);
+      }
     }
 
     return mapDbBookToBook(data as DbBook);
