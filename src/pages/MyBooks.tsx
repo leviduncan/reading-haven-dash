@@ -1,6 +1,4 @@
-
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { Book } from "@/lib/types";
 import BookshelfTabs from "@/components/BookshelfTabs";
 import BookListItem from "@/components/BookListItem";
@@ -174,13 +172,6 @@ const MyBooks = () => {
               <option value="author">Author</option>
               <option value="progress">Progress</option>
             </select>
-            
-            <Link
-              to="/add-book"
-              className="ml-2 px-5 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors whitespace-nowrap"
-            >
-              Add Book
-            </Link>
           </div>
         </div>
         
@@ -188,12 +179,6 @@ const MyBooks = () => {
           {filteredBooks.length === 0 ? (
             <div className="text-center py-12 bg-gray-50 rounded-lg animate-fade-in">
               <p className="text-lg text-muted-foreground mb-4">No books found.</p>
-              <Link
-                to="/add-book"
-                className="px-5 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
-              >
-                Add Your First Book
-              </Link>
             </div>
           ) : (
             filteredBooks.map((book) => (
