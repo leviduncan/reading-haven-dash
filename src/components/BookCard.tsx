@@ -7,9 +7,10 @@ interface BookCardProps {
   book: Book;
   showProgress?: boolean;
   actionButtons?: React.ReactNode;
+  extraContent?: React.ReactNode; // Added extraContent prop
 }
 
-const BookCard = ({ book, showProgress = false, actionButtons }: BookCardProps) => {
+const BookCard = ({ book, showProgress = false, actionButtons, extraContent }: BookCardProps) => {
   return (
     <div className="book-card flex flex-col h-full">
       <div className="relative">
@@ -55,6 +56,12 @@ const BookCard = ({ book, showProgress = false, actionButtons }: BookCardProps) 
                 </svg>
               ))}
             </div>
+          </div>
+        )}
+        
+        {extraContent && (
+          <div className="mt-2">
+            {extraContent}
           </div>
         )}
         
